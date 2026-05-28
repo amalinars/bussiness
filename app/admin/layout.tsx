@@ -5,7 +5,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-muted/30 md:flex">
+    <div className="min-h-screen md:flex">
       <AppSidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <AppHeader />

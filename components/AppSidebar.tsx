@@ -29,18 +29,18 @@ export function AppSidebar({ className }: AppSidebarProps) {
   return (
     <aside
       className={cn(
-        "flex w-full flex-col border-b bg-card/80 p-4 backdrop-blur md:min-h-screen md:w-72 md:border-b-0 md:border-r",
+        "flex w-full flex-col border-b-4 border-border bg-secondary-background p-4 md:min-h-screen md:w-72 md:border-b-0 md:border-r-4",
         className,
       )}
     >
       <div className="mb-6">
-        <Link href="/admin/dashboard" className="block">
-          <p className="text-lg font-semibold tracking-tight">Riztama Business</p>
-          <p className="text-sm text-muted-foreground">Subscription Management</p>
+        <Link href="/admin/dashboard" className="block rounded-base border-2 border-border bg-main p-3 text-main-foreground shadow-shadow">
+          <p className="text-lg font-heading font-black tracking-tight">Riztama Business</p>
+          <p className="text-sm font-base">Subscription Management</p>
         </Link>
       </div>
 
-      <nav className="grid gap-1 md:gap-2">
+      <nav className="grid gap-2">
         {navigationItems.map((item) => {
           const Icon = item.icon;
 
@@ -48,7 +48,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+              className="flex items-center gap-3 rounded-base border-2 border-border bg-background px-3 py-2 text-sm font-base shadow-shadow transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
             >
               <Icon className="size-4" aria-hidden="true" />
               <span>{item.title}</span>
