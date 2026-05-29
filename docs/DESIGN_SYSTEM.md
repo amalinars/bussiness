@@ -6,19 +6,20 @@ The application uses a playful neo-brutalism dashboard style inspired by Saweria
 
 This style gives the internal admin tool a memorable identity while keeping the interface practical for daily business operations.
 
-The UI should feel friendly, clear, and direct. It should not feel overly corporate, but it also should not become childish or visually messy.
+The UI should feel friendly, clear, and direct. It should not feel overly corporate, but it also should not become childish, visually messy, or overly colorful.
 
 ## Core Visual Principles
 
 - Thick black borders
 - Hard offset shadows
 - Flat colors
-- Warm accent colors
+- Warm restrained accent colors
 - Rounded cards
 - Chunky buttons
 - Clear layout hierarchy
 - Simple readable typography
 - Comfortable spacing
+- Solid page backgrounds without grid patterns
 
 ## Component Style Guidelines
 
@@ -28,6 +29,7 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Use hard offset shadows.
 - Use rounded corners.
 - Use flat white, pastel, or warm backgrounds.
+- Prefer neutral card backgrounds for dense dashboard surfaces.
 - Keep content grouped clearly.
 - Avoid nested cards unless there is a strong reason.
 
@@ -62,6 +64,7 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Keep badge colors consistent.
 - Use strong contrast and readable text.
 - Avoid too many status colors.
+- Use softer status tones instead of highly saturated fills.
 
 ### Empty States
 
@@ -76,19 +79,35 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Use consistent active states.
 - Use neobrutalist borders or separators where appropriate.
 - Avoid excessive decoration.
+- Only show active MVP modules in the sidebar.
+- Use chunky bordered navigation items with hard offset shadows.
 
 ### Header
 
 - Keep the header focused on context, page title, and primary actions.
 - Use clear hierarchy.
 - Avoid large marketing-style hero treatments inside the admin dashboard.
+- Use compact scope or status badges when useful.
 
 ### Metric Cards
 
 - Use bold numbers and clear labels.
-- Use warm accent colors to highlight important states.
+- Use warm accent colors sparingly to highlight important states.
 - Keep layout stable and easy to scan.
 - Use consistent card sizing where possible.
+
+### Status Badges
+
+- Use `StatusBadge` for compact state labels.
+- Keep badges bordered, readable, and visually consistent.
+- Prefer a small set of tones: neutral, active, warning, and info.
+- Keep badge colors subdued so tables and dashboards remain easy to scan.
+
+### Page Containers
+
+- Use `PageContainer` for dashboard pages.
+- Keep page headings, descriptions, and optional eyebrow labels consistent.
+- Do not create large marketing-style hero sections inside the admin dashboard.
 
 ## Consistency Rules
 
@@ -99,6 +118,9 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Keep borders, shadows, spacing, and color usage consistent.
 - Keep typography simple and readable.
 - Use playful details only when they support usability.
+- Reuse `MetricCard`, `StatusBadge`, `EmptyState`, and `PageContainer` for current dashboard shell work.
+- Keep most large surfaces neutral. Reserve stronger colors for active navigation, small icons, and compact status indicators.
+- Do not use grid-pattern page backgrounds; they make the dashboard harder to read during daily admin work.
 
 ## Creating New Components
 

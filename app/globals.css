@@ -58,11 +58,11 @@
 }
 
 :root {
-  --background: oklch(0.92 0.06 248);
+  --background: oklch(0.96 0.025 88);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
-  --main: oklch(0.72 0.16 249);
+  --main: oklch(0.86 0.08 82);
   --main-foreground: oklch(0.145 0 0);
   --secondary-background: oklch(1 0 0);
   --popover: oklch(1 0 0);
@@ -97,11 +97,11 @@
 }
 
 .dark {
-  --background: oklch(0.2 0.02 248);
+  --background: oklch(0.2 0.02 88);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.985 0 0);
   --card-foreground: oklch(0.145 0 0);
-  --main: oklch(0.72 0.16 249);
+  --main: oklch(0.86 0.08 82);
   --main-foreground: oklch(0.145 0 0);
   --secondary-background: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -140,8 +140,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 32px 32px;
   }
   html {
     @apply font-sans;

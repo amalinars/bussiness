@@ -1,69 +1,105 @@
-import { Activity, BellRing, CreditCard, UsersRound } from "lucide-react";
+import { Database, Server, UsersRound, WalletCards } from "lucide-react";
 
+import { MetricCard } from "@/components/MetricCard";
 import { PageContainer } from "@/components/PageContainer";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { StatusBadge } from "@/components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const metrics = [
-  { title: "Active Customers", value: "128", helper: "Dummy customer count", icon: UsersRound },
-  { title: "Active Subscriptions", value: "214", helper: "Across all platforms", icon: Activity },
-  { title: "Expiring Soon", value: "17", helper: "Due within 7 days", icon: BellRing },
-  { title: "Unpaid Payments", value: "9", helper: "Pending reconciliation", icon: CreditCard },
+  {
+    title: "Customer Records",
+    value: "0",
+    helper: "Ready for customer data setup",
+    icon: UsersRound,
+    tone: "green" as const,
+  },
+  {
+    title: "Service Accounts",
+    value: "0",
+    helper: "Inventory module prepared",
+    icon: Server,
+    tone: "yellow" as const,
+  },
+  {
+    title: "Available Slots",
+    value: "0",
+    helper: "Slot tracking planned for this module",
+    icon: WalletCards,
+    tone: "pink" as const,
+  },
+  {
+    title: "Data Source",
+    value: "Local UI",
+    helper: "No Supabase schema connected yet",
+    icon: Database,
+    tone: "blue" as const,
+  },
 ];
 
 export default function DashboardPage() {
   return (
     <PageContainer
       title="Dashboard"
-      description="Operational snapshot for the internal subscription sharing business."
+      eyebrow="Active MVP module"
+      description="Operational shell for customer and service account management. Metrics are placeholders until database work starts."
     >
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {metrics.map((metric) => {
-          const Icon = metric.icon;
+        {metrics.map((metric) => (
+          <MetricCard key={metric.title} {...metric} />
+        ))}
+      </div>
 
-          return (
-            <Card key={metric.title} className="bg-secondary-background">
-              <CardHeader className="flex-row items-center justify-between gap-4 space-y-0">
-                <CardTitle className="text-sm font-base">
-                  {metric.title}
-                </CardTitle>
-                <div className="rounded-base border-2 border-border bg-main p-2 text-main-foreground shadow-shadow">
-                  <Icon className="size-5" aria-hidden="true" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-heading font-black tracking-tight">{metric.value}</div>
-                <p className="mt-1 text-sm font-base">{metric.helper}</p>
-              </CardContent>
-            </Card>
-          );
-        })}
+      <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+        <Card className="bg-secondary-background">
+          <CardHeader>
+            <CardTitle className="text-xl font-heading font-black">
+              Current Work Area
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3">
+            <div className="rounded-base border-2 border-border bg-background p-4 shadow-shadow">
+              <div className="mb-2 flex flex-wrap gap-2">
+                <StatusBadge tone="active">Dashboard</StatusBadge>
+                <StatusBadge tone="warning">Customers</StatusBadge>
+                <StatusBadge tone="info">Service Accounts</StatusBadge>
+              </div>
+              <p className="font-base">
+                The app shell is limited to the first three MVP modules. Database schema,
+                CRUD, authentication, and integrations are intentionally not connected yet.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary-background">
+          <CardHeader>
+            <CardTitle className="text-xl font-heading font-black">
+              Next Setup Step
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="font-base">
+              After this shell is stable, the next project step is database planning for
+              customers and service accounts.
+            </p>
+            <Button variant="neutral" disabled>
+              CRUD not enabled yet
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       <Card className="bg-secondary-background">
         <CardHeader>
           <CardTitle className="text-xl font-heading font-black">
-            Neobrutalism component preview
+            Scope Guardrails
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-start">
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="pipeline">
-              <AccordionTrigger>Daily operations checklist</AccordionTrigger>
-              <AccordionContent>
-                Review unpaid invoices, confirm expiring shared accounts, and update
-                customer renewal notes before reminders are sent.
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
-          <Button size="lg">Open dashboard actions</Button>
+        <CardContent className="grid gap-3 md:grid-cols-3">
+          <StatusBadge>Authentication: later</StatusBadge>
+          <StatusBadge>Supabase schema: later</StatusBadge>
+          <StatusBadge>Integrations: later</StatusBadge>
         </CardContent>
       </Card>
     </PageContainer>

@@ -2,6 +2,8 @@
 
 Each module should visually follow the same neobrutalist dashboard style: thick borders, hard offset shadows, flat colors, chunky controls, and clear hierarchy.
 
+Current active MVP modules are Dashboard, Customers, and Service Accounts. Other modules remain planned for later and should not be implemented until explicitly requested.
+
 ## Dashboard
 
 Purpose:
@@ -19,7 +21,7 @@ Planned features:
 - Quick links to major modules
 
 Current status:
-Planned for the MVP dashboard foundation.
+Active MVP module. App shell page implemented with placeholder metrics only.
 
 Future improvements:
 Analytics, date filters, trends, revenue summaries, and alert prioritization.
@@ -41,7 +43,7 @@ Planned features:
 - Relationship to subscriptions and payments
 
 Current status:
-Planned.
+Active MVP module. App shell page implemented with placeholder planning content only.
 
 Future improvements:
 Customer activity timeline, import/export, duplicate detection, and customer-facing history.
@@ -62,7 +64,7 @@ Planned features:
 - Relationship to service accounts and subscriptions
 
 Current status:
-Planned.
+Planned for later.
 
 Future improvements:
 Platform-specific rules, pricing templates, slot limits, and reporting by platform.
@@ -84,7 +86,7 @@ Planned features:
 - Secure handling approach for sensitive account data
 
 Current status:
-Planned.
+Active MVP module. App shell page implemented with placeholder planning content only.
 
 Future improvements:
 Encrypted credential handling, slot history, account health tracking, and audit logs.
@@ -106,7 +108,7 @@ Planned features:
 - Filtering by status and platform
 
 Current status:
-Planned.
+Planned for later.
 
 Future improvements:
 Recurring renewal workflows, advanced reminders, subscription history, and automated status updates.
@@ -127,7 +129,7 @@ Planned features:
 - Basic payment summary on the dashboard
 
 Current status:
-Planned.
+Planned for later.
 
 Future improvements:
 Payment gateway integration, receipts, revenue reporting, export tools, and reconciliation workflows.
@@ -148,7 +150,7 @@ Planned features:
 - Relationship to subscriptions and payments
 
 Current status:
-Planned for admin-facing use only.
+Planned for later.
 
 Future improvements:
 WhatsApp, Telegram, or email notifications when explicitly requested.

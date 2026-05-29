@@ -31,18 +31,16 @@ The app helps replace scattered spreadsheet tracking with a dedicated admin dash
 
 ## Current MVP
 
-The current MVP focuses on internal record management and dashboard visibility.
+The current MVP focuses on the smallest useful internal dashboard foundation.
 
-Included MVP areas:
+Current active MVP modules:
 
 - Dashboard overview
-- Customer management planning
-- Platform management planning
-- Service account management planning
-- Subscription tracking planning
-- Payment tracking planning
-- Admin reminder planning
+- Customer management
+- Service account management
 - Playful neo-brutalism dashboard design direction
+
+Modules such as Platforms, Subscriptions, Payments, and Reminders are still part of the broader product plan, but should be treated as later scope until explicitly requested.
 
 ## Explicitly Not Included Yet
 
@@ -61,15 +59,15 @@ The following are not part of the current scope unless specifically requested:
 
 ### Dashboard
 
-Shows key internal metrics, upcoming expirations, payment status summaries, and reminders.
+Shows key internal metrics and quick operational context for the active MVP modules.
 
 ### Customers
 
-Stores customer information and supports customer lookup for subscriptions and payments.
+Stores customer information and supports customer lookup.
 
 ### Platforms
 
-Stores supported digital subscription platforms or service categories managed by the business.
+Stores supported digital subscription platforms or service categories managed by the business. Planned for later.
 
 ### Service Accounts
 
@@ -77,21 +75,23 @@ Stores internal service account records and the available slots attached to each
 
 ### Subscriptions
 
-Tracks customer subscriptions, assigned platform, assigned service account slot, start date, expiration date, and status.
+Tracks customer subscriptions, assigned platform, assigned service account slot, start date, expiration date, and status. Planned for later.
 
 ### Payments
 
-Tracks customer payment records, payment status, amount, payment date, and related subscription.
+Tracks customer payment records, payment status, amount, payment date, and related subscription. Planned for later.
 
 ### Reminders
 
-Tracks admin-facing reminders for renewals, expirations, unpaid records, and follow-up tasks.
+Tracks admin-facing reminders for renewals, expirations, unpaid records, and follow-up tasks. Planned for later.
 
 ## Current Project Scope
 
-The current scope is to establish the internal dashboard foundation, documentation, development rules, module planning, and consistent design direction.
+The current scope is to establish the internal dashboard foundation, documentation, development rules, and consistent design direction for Dashboard, Customers, and Service Accounts.
 
 The app should remain focused on internal subscription operations.
+
+The current app shell exposes only Dashboard, Customers, and Service Accounts. Future modules should remain hidden from primary navigation until explicitly requested.
 
 ## Future Possible Scope
 

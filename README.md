@@ -16,9 +16,9 @@ The goal is to replace manual Excel-based tracking with a cleaner and more struc
 
 ## Project Status
 
-Initial documentation and setup phase.
+Initial app shell foundation phase.
 
-Authentication, database schema, CRUD workflows, and third-party integrations are not included yet.
+The active MVP shell currently includes Dashboard, Customers, and Service Accounts. Authentication, database schema, CRUD workflows, and third-party integrations are not included yet.
 
 ## Design Style
 
@@ -37,6 +37,7 @@ The application should use a playful neo-brutalism dashboard style inspired by S
 - [Project Context](./docs/PROJECT_CONTEXT.md)
 - [Development Rules](./docs/DEVELOPMENT_RULES.md)
 - [App Modules](./docs/APP_MODULES.md)
+- [App Shell](./docs/APP_SHELL.md)
 - [Design System](./docs/DESIGN_SYSTEM.md)
 - [Changelog](./docs/CHANGELOG.md)
 - [README for AI](./docs/README_FOR_AI.md)
