@@ -38,6 +38,7 @@ The application should use a playful neo-brutalism dashboard style inspired by S
 - [Development Rules](./docs/DEVELOPMENT_RULES.md)
 - [App Modules](./docs/APP_MODULES.md)
 - [App Shell](./docs/APP_SHELL.md)
+- [Database Plan](./docs/DATABASE_PLAN.md)
 - [Design System](./docs/DESIGN_SYSTEM.md)
 - [Changelog](./docs/CHANGELOG.md)
 - [README for AI](./docs/README_FOR_AI.md)

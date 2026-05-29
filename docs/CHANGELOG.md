@@ -15,6 +15,7 @@
 * Initial admin app shell for Dashboard, Customers, and Service Accounts.
 * Reusable neobrutalist shell components for metric cards and status badges.
 * App shell documentation.
+* Initial database planning documentation for Customers and Service Accounts.
 
 ### Changed
 

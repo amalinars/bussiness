@@ -43,7 +43,7 @@ Planned features:
 - Relationship to subscriptions and payments
 
 Current status:
-Active MVP module. App shell page implemented with placeholder planning content only.
+Active MVP module. App shell page implemented with placeholder planning content only. Initial database planning documented in `/docs/DATABASE_PLAN.md`.
 
 Future improvements:
 Customer activity timeline, import/export, duplicate detection, and customer-facing history.
@@ -86,7 +86,7 @@ Planned features:
 - Secure handling approach for sensitive account data
 
 Current status:
-Active MVP module. App shell page implemented with placeholder planning content only.
+Active MVP module. App shell page implemented with placeholder planning content only. Initial database planning documented in `/docs/DATABASE_PLAN.md`.
 
 Future improvements:
 Encrypted credential handling, slot history, account health tracking, and audit logs.
