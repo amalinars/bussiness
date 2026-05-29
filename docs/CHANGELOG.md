@@ -16,6 +16,8 @@
 * Reusable neobrutalist shell components for metric cards and status badges.
 * App shell documentation.
 * Initial database planning documentation for Customers and Service Accounts.
+* Initial Supabase migration for Customers and Service Accounts.
+* Initial TypeScript database types and status constants.
 
 ### Changed
 

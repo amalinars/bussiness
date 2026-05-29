@@ -93,7 +93,7 @@ The app should remain focused on internal subscription operations.
 
 The current app shell exposes only Dashboard, Customers, and Service Accounts. Future modules should remain hidden from primary navigation until explicitly requested.
 
-Initial database planning is limited to Customers and Service Accounts. Database schema and CRUD implementation have not been created yet.
+Initial database scope is limited to Customers and Service Accounts. Initial migration SQL exists, but CRUD implementation has not been created yet.
 
 ## Future Possible Scope
 

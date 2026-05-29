@@ -18,7 +18,7 @@ The goal is to replace manual Excel-based tracking with a cleaner and more struc
 
 Initial app shell foundation phase.
 
-The active MVP shell currently includes Dashboard, Customers, and Service Accounts. Authentication, database schema, CRUD workflows, and third-party integrations are not included yet.
+The active MVP shell currently includes Dashboard, Customers, and Service Accounts. Initial database migration SQL exists for Customers and Service Accounts. Authentication, CRUD workflows, and third-party integrations are not included yet.
 
 ## Design Style
 

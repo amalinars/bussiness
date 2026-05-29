@@ -4,11 +4,15 @@
 
 This document defines the initial database planning direction for the active MVP modules.
 
-No database schema, migration, Supabase table, or CRUD implementation has been created yet. This is a planning document only.
+An initial migration file has been created for this plan, but it has not been applied to a Supabase project from this workspace yet. CRUD implementation has not been created yet.
+
+Migration file:
+
+- `supabase/migrations/20260529000000_initial_customers_service_accounts.sql`
 
 ## Current Database Scope
 
-Initial database planning is limited to:
+Initial database scope is limited to:
 
 - Customers
 - Service Accounts
@@ -83,6 +87,9 @@ Not included yet:
 - Customer login
 - Customer-facing profile
 
+Implementation status:
+Migration SQL exists.
+
 ### service_accounts
 
 Purpose:
@@ -128,6 +135,9 @@ Not included yet:
 - Slot assignment table
 - Subscription relation
 - Platform relation table
+
+Implementation status:
+Migration SQL exists.
 
 ## Initial Relationship Plan
 
@@ -176,6 +186,42 @@ Future database planning may add:
 - Notification delivery logs
 
 These should be planned and documented before implementation.
+
+## TypeScript Support
+
+Initial TypeScript database types have been added in:
+
+- `types/database.ts`
+- `types/index.ts`
+
+Reusable status constants have been added in:
+
+- `lib/statuses.ts`
+
+The Supabase client in `lib/supabase.ts` is typed with the current `Database` type.
+
+## Current Implementation Status
+
+Created:
+
+- Initial migration SQL for `customers`.
+- Initial migration SQL for `service_accounts`.
+- Check constraints for status values.
+- Slot capacity constraints for service accounts.
+- `created_at` and `updated_at` fields.
+- Shared `set_updated_at` trigger function.
+- TypeScript database row, insert, and update types.
+- Status constants.
+
+Not created:
+
+- Supabase project link.
+- Applied remote database migration.
+- Seed data.
+- CRUD pages or forms.
+- Data fetching in pages.
+- Authentication.
+- RLS policies.
 
 ## Open Questions
 
