@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getCustomers } from "@/lib/customers";
 
 import { CustomerActions } from "./CustomerActions";
+import { CustomerFilters } from "./CustomerFilters";
 import { CustomerFormDialog } from "./CustomerFormDialog";
 
 const customerStatusTone = {
@@ -15,10 +16,25 @@ const customerStatusTone = {
   archived: "neutral",
 } as const;
 
-export default async function CustomersPage() {
+type CustomersPageProps = {
+  searchParams: Promise<{
+    q?: string;
+    status?: string;
+  }>;
+};
+
+export default async function CustomersPage({ searchParams }: CustomersPageProps) {
   await connection();
 
-  const { data: customers, error } = await getCustomers();
+  const params = await searchParams;
+  const status = customerStatusTone[params.status as keyof typeof customerStatusTone] ? params.status : "all";
+  const filters = {
+    q: params.q ?? "",
+    status: status as keyof typeof customerStatusTone | "all",
+  };
+  const hasFilters = Boolean(filters.q || filters.status !== "all");
+
+  const { data: customers, error } = await getCustomers(filters);
 
   return (
     <PageContainer
@@ -26,14 +42,19 @@ export default async function CustomersPage() {
       eyebrow="Active MVP module"
       description="Customer records from the initial Supabase database foundation."
     >
+      <CustomerFilters q={filters.q} status={filters.status} />
       {error ? (
         <EmptyState title="Customer data unavailable" description={error} />
       ) : customers.length === 0 ? (
         <div className="space-y-4">
           <CustomerFormDialog />
           <EmptyState
-            title="No customers yet"
-            description="The customers table is connected. Add the first customer to start managing records."
+            title={hasFilters ? "No matching customers" : "No customers yet"}
+            description={
+              hasFilters
+                ? "Try a different search or status filter."
+                : "The customers table is connected. Add the first customer to start managing records."
+            }
           />
         </div>
       ) : (
@@ -41,7 +62,9 @@ export default async function CustomersPage() {
           <CardHeader className="gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
               <CardTitle>Customer list</CardTitle>
-              <CardDescription>{customers.length} customer records loaded from Supabase.</CardDescription>
+              <CardDescription>
+                {customers.length} {hasFilters ? "matching" : "total"} customer records loaded from Supabase.
+              </CardDescription>
             </div>
             <CustomerFormDialog />
           </CardHeader>

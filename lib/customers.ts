@@ -31,6 +31,11 @@ export type CustomerMutationResult =
     error: string;
   };
 
+export type CustomerFilters = {
+  q?: string;
+  status?: CustomerStatus | "all";
+};
+
 const customerSelect = "id,name,contact_label,phone,email,status,notes,created_at,updated_at";
 
 function emptyToNull(value: FormDataEntryValue | string | null | undefined) {
@@ -74,11 +79,23 @@ function toMutationError(action: string, error: unknown): CustomerMutationResult
   };
 }
 
-export async function getCustomers(): Promise<CustomersResult> {
-  const { data, error } = await supabase
-    .from("customers")
-    .select(customerSelect)
-    .order("name", { ascending: true });
+export async function getCustomers(filters: CustomerFilters = {}): Promise<CustomersResult> {
+  let query = supabase.from("customers").select(customerSelect);
+
+  if (filters.status && filters.status !== "all") {
+    query = query.eq("status", filters.status);
+  }
+
+  const search = filters.q?.trim();
+
+  if (search) {
+    const escapedSearch = search.replaceAll("%", "\\%").replaceAll("_", "\\_");
+    query = query.or(
+      `name.ilike.%${escapedSearch}%,contact_label.ilike.%${escapedSearch}%,phone.ilike.%${escapedSearch}%,email.ilike.%${escapedSearch}%`,
+    );
+  }
+
+  const { data, error } = await query.order("name", { ascending: true });
 
   if (error) {
     console.error("Failed to load customers", {

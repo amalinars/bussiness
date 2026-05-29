@@ -26,6 +26,7 @@
 * Manual seed SQL for Customers and Service Accounts local/VPS Supabase testing.
 * Customer create, edit, and archive-only actions using neobrutalist dialog UI.
 * Temporary Customer `INSERT` and `UPDATE` RLS policies for the current unauthenticated dev setup.
+* Customer search and status filtering on the admin Customers list.
 
 ### Changed
 

@@ -43,7 +43,7 @@ Planned features:
 - Relationship to subscriptions and payments
 
 Current status:
-Active MVP module. The admin Customers page reads from `riztama_business.customers` through the typed Supabase client and `lib/customers.ts`. Customer create, edit, and archive-only actions are available through neobrutalist dialog forms. Empty and load-error states use the shared `EmptyState` component. Customer details, search, filters, hard delete, and relationships to future tables are not implemented yet.
+Active MVP module. The admin Customers page reads from `riztama_business.customers` through the typed Supabase client and `lib/customers.ts`. Customer create, edit, and archive-only actions are available through neobrutalist dialog forms. The list supports URL-backed search across name, contact label, phone, and email plus status filtering. Empty, no-match, and load-error states use the shared `EmptyState` component. Customer details, hard delete, and relationships to future tables are not implemented yet.
 
 Future improvements:
 Customer activity timeline, import/export, duplicate detection, and customer-facing history.
