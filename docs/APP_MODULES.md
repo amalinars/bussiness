@@ -2,7 +2,7 @@
 
 Each module should visually follow the same neobrutalist dashboard style: thick borders, hard offset shadows, flat colors, chunky controls, and clear hierarchy.
 
-Current active MVP modules are Dashboard, Customers, and Service Accounts. Other modules remain planned for later and should not be implemented until explicitly requested.
+Current active MVP modules are Dashboard, Customers, and Service Accounts. Initial database scope is intentionally limited to `riztama_business.customers` and `riztama_business.service_accounts`. Customers and Service Accounts now have read-only Supabase-backed list pages. Other modules remain planned for later and should not be implemented until explicitly requested.
 
 ## Dashboard
 
@@ -43,7 +43,7 @@ Planned features:
 - Relationship to subscriptions and payments
 
 Current status:
-Active MVP module. App shell page implemented with placeholder planning content only. Initial database planning documented in `/docs/DATABASE_PLAN.md`.
+Active MVP module. The admin Customers page reads from `riztama_business.customers` through the typed Supabase client and `lib/customers.ts`. Customer create, edit, and archive-only actions are available through neobrutalist dialog forms. Empty and load-error states use the shared `EmptyState` component. Customer details, search, filters, hard delete, and relationships to future tables are not implemented yet.
 
 Future improvements:
 Customer activity timeline, import/export, duplicate detection, and customer-facing history.
@@ -64,7 +64,7 @@ Planned features:
 - Relationship to service accounts and subscriptions
 
 Current status:
-Planned for later.
+Planned for later. No `platforms` table is part of the initial two-table database foundation.
 
 Future improvements:
 Platform-specific rules, pricing templates, slot limits, and reporting by platform.
@@ -86,7 +86,7 @@ Planned features:
 - Secure handling approach for sensitive account data
 
 Current status:
-Active MVP module. App shell page implemented with placeholder planning content only. Initial database planning documented in `/docs/DATABASE_PLAN.md`.
+Active MVP module. The admin Service Accounts page reads from `riztama_business.service_accounts` through the typed Supabase client and a read-only data layer in `lib/service-accounts.ts`. Empty and load-error states use the shared `EmptyState` component. CRUD, account detail views, credential management, and relationships to future tables are not implemented yet.
 
 Future improvements:
 Encrypted credential handling, slot history, account health tracking, and audit logs.
@@ -108,7 +108,7 @@ Planned features:
 - Filtering by status and platform
 
 Current status:
-Planned for later.
+Planned for later. No `subscriptions` table is part of the initial two-table database foundation.
 
 Future improvements:
 Recurring renewal workflows, advanced reminders, subscription history, and automated status updates.
@@ -129,7 +129,7 @@ Planned features:
 - Basic payment summary on the dashboard
 
 Current status:
-Planned for later.
+Planned for later. No `payments` table is part of the initial two-table database foundation.
 
 Future improvements:
 Payment gateway integration, receipts, revenue reporting, export tools, and reconciliation workflows.
@@ -150,7 +150,7 @@ Planned features:
 - Relationship to subscriptions and payments
 
 Current status:
-Planned for later.
+Planned for later. No `reminders` table is part of the initial two-table database foundation.
 
 Future improvements:
 WhatsApp, Telegram, or email notifications when explicitly requested.
@@ -169,7 +169,7 @@ Planned features:
 - Placeholder for future settings
 
 Current status:
-Planned for later.
+Planned for later. No `settings` table is part of the initial two-table database foundation.
 
 Future improvements:
 Authentication settings, role settings, notification settings, integration settings, and business rule configuration.

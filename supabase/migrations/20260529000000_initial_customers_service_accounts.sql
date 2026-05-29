@@ -1,6 +1,8 @@
+create schema if not exists riztama_business;
+
 create extension if not exists pgcrypto;
 
-create or replace function public.set_updated_at()
+create or replace function riztama_business.set_updated_at()
 returns trigger
 language plpgsql
 as $$
@@ -10,7 +12,7 @@ begin
 end;
 $$;
 
-create table if not exists public.customers (
+create table if not exists riztama_business.customers (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   contact_label text,
@@ -26,19 +28,19 @@ create table if not exists public.customers (
 );
 
 create index if not exists customers_status_idx
-  on public.customers (status);
+  on riztama_business.customers (status);
 
 create index if not exists customers_name_idx
-  on public.customers (name);
+  on riztama_business.customers (name);
 
-drop trigger if exists set_customers_updated_at on public.customers;
+drop trigger if exists set_customers_updated_at on riztama_business.customers;
 
 create trigger set_customers_updated_at
-before update on public.customers
+before update on riztama_business.customers
 for each row
-execute function public.set_updated_at();
+execute function riztama_business.set_updated_at();
 
-create table if not exists public.service_accounts (
+create table if not exists riztama_business.service_accounts (
   id uuid primary key default gen_random_uuid(),
   label text not null,
   service_name text not null,
@@ -63,14 +65,29 @@ create table if not exists public.service_accounts (
 );
 
 create index if not exists service_accounts_status_idx
-  on public.service_accounts (status);
+  on riztama_business.service_accounts (status);
 
 create index if not exists service_accounts_service_name_idx
-  on public.service_accounts (service_name);
+  on riztama_business.service_accounts (service_name);
 
-drop trigger if exists set_service_accounts_updated_at on public.service_accounts;
+drop trigger if exists set_service_accounts_updated_at on riztama_business.service_accounts;
 
 create trigger set_service_accounts_updated_at
-before update on public.service_accounts
+before update on riztama_business.service_accounts
 for each row
-execute function public.set_updated_at();
+execute function riztama_business.set_updated_at();
+
+alter table riztama_business.customers enable row level security;
+alter table riztama_business.service_accounts enable row level security;
+
+create policy customers_read_all
+  on riztama_business.customers
+  for select
+  using (true);
+
+create policy service_accounts_read_all
+  on riztama_business.service_accounts
+  for select
+  using (true);
+
+

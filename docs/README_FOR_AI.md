@@ -52,3 +52,9 @@ Update or create documentation when changing:
 - Architecture or project structure
 
 If a change introduces new context that does not fit an existing document, create a new clear document inside `/docs`.
+
+## Development History
+
+Before continuing implementation, read the relevant markdown files inside `docs/development-log/` when the folder exists. Do not use a root-level `docs/DEVELOPMENT_LOG.md` file for new history entries.
+
+Use those logs to understand previous decisions, rejected approaches, current implementation status, and safe next steps. Add a new dated markdown file in `docs/development-log/` after each meaningful implementation or planning change so context is not lost when work moves between agents. Do not append unrelated changes into an existing log file.

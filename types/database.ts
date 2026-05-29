@@ -1,3 +1,5 @@
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+
 export type CustomerStatus = "active" | "inactive" | "archived";
 
 export type ServiceAccountStatus =
@@ -66,7 +68,7 @@ export type ServiceAccountInsert = {
 export type ServiceAccountUpdate = Partial<ServiceAccountInsert>;
 
 export type Database = {
-  public: {
+  riztama_business: {
     Tables: {
       customers: {
         Row: Customer;
@@ -82,8 +84,15 @@ export type Database = {
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      set_updated_at: {
+        Args: Record<PropertyKey, never>;
+        Returns: unknown;
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };
 };
+
+export type RiztamaBusinessSchema = Database["riztama_business"];

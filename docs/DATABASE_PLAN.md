@@ -10,12 +10,21 @@ Migration file:
 
 - `supabase/migrations/20260529000000_initial_customers_service_accounts.sql`
 
+Related development history:
+
+- `docs/development-log/2026-05-29-initial-database-scope.md`
+
 ## Current Database Scope
 
 Initial database scope is limited to:
 
 - Customers
 - Service Accounts
+
+The initial migration intentionally creates only two business tables inside the `riztama_business` schema:
+
+- `riztama_business.customers`
+- `riztama_business.service_accounts`
 
 The Dashboard will read summary data from these modules later.
 
@@ -33,6 +42,7 @@ Planned backend:
 
 - Supabase
 - PostgreSQL via Supabase
+- Dedicated application schema: `riztama_business`
 
 Supabase-related application logic should live inside `/lib` or dedicated service files.
 
@@ -44,7 +54,10 @@ Supabase-related application logic should live inside `/lib` or dedicated servic
 - Keep fields simple until real business workflows require more complexity.
 - Do not store service account passwords in plain text.
 - Do not add authentication rules yet.
-- Do not add Row Level Security policy planning yet unless authentication is introduced.
+- RLS is enabled on the two initial tables as a Supabase production-safety baseline.
+- Temporary read-only `SELECT` policies are present so the current anon-key Supabase client can load the internal admin list pages before authentication exists.
+- Temporary customer `INSERT` and `UPDATE` policies are present so Customer create, edit, and archive-only actions work before authentication exists. Revisit these policies when authentication or server-only privileged access is introduced.
+- Do not create additional business tables such as `platforms`, `subscriptions`, `payments`, `reminders`, or slot assignment tables until explicitly requested.
 
 ## Planned Tables
 
@@ -52,6 +65,9 @@ Supabase-related application logic should live inside `/lib` or dedicated servic
 
 Purpose:
 Store internal customer records.
+
+Database object:
+`riztama_business.customers`
 
 Planned fields:
 
@@ -76,7 +92,8 @@ Planned customer statuses:
 Initial UI usage:
 
 - Customer list
-- Customer detail summary
+- Customer create and edit dialog
+- Archive-only customer action through `status = 'archived'`
 - Customer status badge
 - Search by name, phone, or contact label
 
@@ -94,6 +111,9 @@ Migration SQL exists.
 
 Purpose:
 Store internal service account records and slot capacity metadata.
+
+Database object:
+`riztama_business.service_accounts`
 
 Planned fields:
 
@@ -144,6 +164,8 @@ Migration SQL exists.
 There is no direct relationship required between `customers` and `service_accounts` in the first database step.
 
 The relationship between customers and service account slots should be introduced later through a `subscriptions` or `account_slots` model after the customer and service account modules are stable.
+
+No foreign key between `riztama_business.customers` and `riztama_business.service_accounts` is required in the current initial migration because direct customer-to-account assignment is not part of the two-table foundation yet.
 
 ## Derived Values
 
@@ -206,22 +228,36 @@ Created:
 
 - Initial migration SQL for `customers`.
 - Initial migration SQL for `service_accounts`.
+- Dedicated `riztama_business` schema.
 - Check constraints for status values.
 - Slot capacity constraints for service accounts.
 - `created_at` and `updated_at` fields.
 - Shared `set_updated_at` trigger function.
+- RLS enabled on the two initial tables.
+- Temporary read-only `SELECT` policies for the two initial tables.
+- Temporary customer `INSERT` and `UPDATE` policies for Customer CRUD.
 - TypeScript database row, insert, and update types.
 - Status constants.
+- Manual seed SQL for safe local/VPS Supabase testing in `supabase/seed.sql`.
 
 Not created:
 
 - Supabase project link.
 - Applied remote database migration.
-- Seed data.
-- CRUD pages or forms.
-- Data fetching in pages.
+- Service Account CRUD pages or forms.
+- Customer detail pages, search, and filters.
 - Authentication.
-- RLS policies.
+- Authenticated role-based RLS policies.
+- Tables for Platforms, Subscriptions, Payments, Reminders, Settings, or slot assignment.
+
+## Decision History
+
+- 2026-05-29: The initial migration was reviewed after the user clarified that only `customers` and `service_accounts` should exist first. The migration was intentionally left unchanged because it already creates only the two initial tables and required helpers inside `riztama_business`.
+- 2026-05-29: The schema must remain `riztama_business`. Do not move these tables or helper functions to `public` unless the user explicitly requests a schema change.
+- 2026-05-29: Development history should be recorded as markdown files inside `docs/development-log/`, not as a single root-level `docs/DEVELOPMENT_LOG.md` file.
+- 2026-05-29: Temporary read-only `SELECT` policies were added for `customers` and `service_accounts` so the anon-key Supabase client can read list pages before authentication exists. Replace or restrict these policies when authentication or server-only database access is introduced.
+- 2026-05-29: Manual seed SQL was added in `supabase/seed.sql` for safe local/VPS Supabase testing. It uses fixed UUIDs and `on conflict (id) do nothing` so rerunning it does not duplicate rows.
+- 2026-05-29: Customer CRUD was added with create/edit dialog actions and archive-only delete behavior. Temporary customer `INSERT` and `UPDATE` policies exist only for the current unauthenticated dev setup. See `docs/development-log/2026-05-29-customer-crud.md`.
 
 ## Open Questions
 

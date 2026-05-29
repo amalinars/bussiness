@@ -17,7 +17,7 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Rounded cards
 - Chunky buttons
 - Clear layout hierarchy
-- Simple readable typography
+- Friendly rounded typography
 - Comfortable spacing
 - Solid page backgrounds without grid patterns
 
@@ -49,6 +49,12 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Keep field spacing comfortable.
 - Use simple validation states.
 - Avoid decorative styling that hurts readability.
+
+### Typography
+
+- Use Nunito for body text so the dashboard feels friendly and rounded without hurting readability.
+- Use Fredoka for headings, table headers, badges, and chunky labels so the app feels playful rather than formal.
+- Keep copy clear and practical. Typography should feel cute and approachable, not childish or decorative.
 
 ### Tables
 
@@ -116,7 +122,7 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Apply neobrutalist styling through reusable component patterns.
 - Do not mix unrelated visual styles.
 - Keep borders, shadows, spacing, and color usage consistent.
-- Keep typography simple and readable.
+- Keep typography friendly, rounded, and readable.
 - Use playful details only when they support usability.
 - Reuse `MetricCard`, `StatusBadge`, `EmptyState`, and `PageContainer` for current dashboard shell work.
 - Keep most large surfaces neutral. Reserve stronger colors for active navigation, small icons, and compact status indicators.
