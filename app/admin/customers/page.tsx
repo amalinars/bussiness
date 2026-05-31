@@ -39,8 +39,8 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
   return (
     <PageContainer
       title="Customers"
-      eyebrow="Active MVP module"
-      description="Customer records from the initial Supabase database foundation."
+      eyebrow="Customers"
+      description="Manage customer records and contact details."
     >
       <CustomerFilters q={filters.q} status={filters.status} />
       {error ? (
@@ -53,7 +53,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
             description={
               hasFilters
                 ? "Try a different search or status filter."
-                : "The customers table is connected. Add the first customer to start managing records."
+                : "Add the first customer to start managing records."
             }
           />
         </div>
@@ -63,7 +63,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
             <div>
               <CardTitle>Customer list</CardTitle>
               <CardDescription>
-                {customers.length} {hasFilters ? "matching" : "total"} customer records loaded from Supabase.
+                {customers.length} {hasFilters ? "matching" : "total"} customer records found.
               </CardDescription>
             </div>
             <CustomerFormDialog />

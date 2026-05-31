@@ -79,7 +79,7 @@ export default async function DashboardPage() {
     <PageContainer
       title="Dashboard"
       eyebrow="Overview"
-      description="Real-time metrics and activity feed from your business database."
+      description="Key metrics, upcoming renewals, and recent activity."
     >
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {businessMetrics.map((metric) => (
@@ -231,10 +231,10 @@ export default async function DashboardPage() {
             <div className="rounded-base border-2 border-border bg-background p-4 shadow-shadow">
               <div className="mb-2 flex flex-wrap gap-2">
                 <StatusBadge tone="active">Operational</StatusBadge>
-                <StatusBadge tone="info">Supabase Live</StatusBadge>
+                <StatusBadge tone="info">Live Data</StatusBadge>
               </div>
               <p className="font-base text-sm">
-                Database connection established. All modules are reporting live data.
+                Business records are up to date and ready for daily operations.
               </p>
             </div>
           </CardContent>

@@ -41,8 +41,8 @@ export default async function ServiceAccountsPage({ searchParams }: ServiceAccou
   return (
     <PageContainer
       title="Service Accounts"
-      eyebrow="Active MVP module"
-      description="Service account inventory from the initial Supabase database foundation."
+      eyebrow="Accounts"
+      description="Manage service accounts, credentials, renewals, and slot capacity."
     >
       <ServiceAccountFilters q={filters.q} status={filters.status} />
       {error ? (
@@ -55,7 +55,7 @@ export default async function ServiceAccountsPage({ searchParams }: ServiceAccou
             description={
               hasFilters
                 ? "Try a different search or status filter."
-                : "The service_accounts table is connected. Add the first service account to start managing slot capacity."
+                : "Add the first service account to start managing slot capacity."
             }
           />
         </div>
@@ -65,7 +65,7 @@ export default async function ServiceAccountsPage({ searchParams }: ServiceAccou
             <div className="min-w-0">
               <CardTitle className="text-lg sm:text-xl">Service account list</CardTitle>
               <CardDescription className="wrap-break-word">
-                {serviceAccounts.length} {hasFilters ? "matching" : "total"} service account records loaded from Supabase.
+                {serviceAccounts.length} {hasFilters ? "matching" : "total"} service account records found.
               </CardDescription>
             </div>
             <ServiceAccountFormDialog />

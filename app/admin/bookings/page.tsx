@@ -46,7 +46,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
   return (
     <PageContainer
       title="Bookings"
-      eyebrow="New MVP module"
+      eyebrow="Bookings"
       description="Manage customer bookings from service account profiles and rental packages."
     >
       <BookingFilters
@@ -65,7 +65,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             description={
               hasFilters
                 ? "Try a different search or status filter."
-                : optionsResult.error ?? "Add the first booking to start replacing the spreadsheet flow."
+                : optionsResult.error ?? "Add the first booking to start managing customer rentals."
             }
           />
         </div>
@@ -75,7 +75,7 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
             <div className="min-w-0">
               <CardTitle className="text-lg sm:text-xl">Booking list</CardTitle>
               <CardDescription className="wrap-break-word">
-                {bookingsResult.data.length} {hasFilters ? "matching" : "total"} booking records loaded from Supabase.
+                {bookingsResult.data.length} {hasFilters ? "matching" : "total"} booking records found.
               </CardDescription>
             </div>
             {canOpenForm ? <BookingFormDialog options={optionsResult} /> : null}

@@ -43,7 +43,7 @@ export function AppSidebar({ className }: AppSidebarProps) {
 
       <aside
         className={cn(
-          "hidden w-full flex-col border-b-4 border-border bg-secondary-background p-4 md:flex md:min-h-screen md:w-72 md:border-b-0 md:border-r-4",
+          "hidden w-full flex-col border-b-4 border-border bg-secondary-background p-4 md:flex md:h-screen md:w-72 md:shrink-0 md:overflow-y-auto md:border-b-0 md:border-r-4",
           isOpen && "flex border-b-4 md:border-b-0 md:border-r-4",
           className,
         )}
