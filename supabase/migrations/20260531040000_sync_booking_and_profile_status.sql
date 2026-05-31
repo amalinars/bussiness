@@ -31,11 +31,12 @@ begin
       where id = v_profile_id
         and status != 'occupied';
     else
-      -- If it is currently occupied, set it back to 'available'
+      -- If it has no active booking, set it back to 'available'
       update riztama_business.service_account_profiles
       set status = 'available'
       where id = v_profile_id
-        and status = 'occupied';
+        and status != 'available'
+        and status != 'archived';
     end if;
   end if;
 
@@ -59,7 +60,8 @@ begin
         update riztama_business.service_account_profiles
         set status = 'available'
         where id = v_profile_id
-          and status = 'occupied';
+          and status != 'available'
+          and status != 'archived';
       end if;
     end if;
   end if;

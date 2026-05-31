@@ -10,6 +10,7 @@ import type {
   SubscriptionInsert,
   SubscriptionStatus,
   SubscriptionUpdate,
+  ServiceAccountProfileStatus,
 } from "@/types/database";
 
 type SubscriptionListRow = Subscription & {
@@ -297,6 +298,73 @@ export async function getSubscriptions(filters: SubscriptionFilters = {}): Promi
   return { data: filteredRows.map(mapSubscriptionRow), error: null };
 }
 
+async function syncProfileStatus(profileId: string): Promise<void> {
+  try {
+    const { data: activeBookings, error: checkError } = await supabase
+      .from("subscriptions")
+      .select("id")
+      .eq("service_account_profile_id", profileId)
+      .eq("status", "booked");
+
+    if (checkError) {
+      console.error("Failed to check active bookings for profile:", checkError);
+      return;
+    }
+
+    const hasActiveBooking = (activeBookings ?? []).length > 0;
+    const newStatus: ServiceAccountProfileStatus = hasActiveBooking ? "occupied" : "available";
+
+    const { error: updateError } = await supabase
+      .from("service_account_profiles")
+      .update({ status: newStatus })
+      .eq("id", profileId)
+      .neq("status", "archived")
+      .neq("status", newStatus);
+
+    if (updateError) {
+      console.error("Failed to sync profile status:", updateError);
+      return;
+    }
+
+    const { data: profileData, error: profileError } = await supabase
+      .from("service_account_profiles")
+      .select("service_account_id")
+      .eq("id", profileId)
+      .maybeSingle();
+
+    if (profileError || !profileData) {
+      console.error("Failed to get profile data for slot sync:", profileError);
+      return;
+    }
+
+    const accountId = profileData.service_account_id;
+
+    const { data: countData, error: countError } = await supabase
+      .from("service_account_profiles")
+      .select("id")
+      .eq("service_account_id", accountId)
+      .in("status", ["occupied", "reserved"]);
+
+    if (countError) {
+      console.error("Failed to count occupied profiles:", countError);
+      return;
+    }
+
+    const usedSlots = (countData ?? []).length;
+
+    const { error: accountUpdateError } = await supabase
+      .from("service_accounts")
+      .update({ used_slots: usedSlots })
+      .eq("id", accountId);
+
+    if (accountUpdateError) {
+      console.error("Failed to update service account used slots:", accountUpdateError);
+    }
+  } catch (err) {
+    console.error("Error in syncProfileStatus:", err);
+  }
+}
+
 export async function createSubscription(input: SubscriptionFormInput): Promise<SubscriptionMutationResult> {
   try {
     let customerId = emptyToNull(input.customer_id);
@@ -329,6 +397,8 @@ export async function createSubscription(input: SubscriptionFormInput): Promise<
       return toMutationError("Failed to create booking", error);
     }
 
+    await syncProfileStatus(payload.service_account_profile_id);
+
     return { ok: true, error: null };
   } catch (error) {
     return toMutationError("Failed to create booking", error);
@@ -346,11 +416,28 @@ export async function updateSubscription(
       throw new Error("Customer is required.");
     }
 
+    const { data: oldBooking, error: loadError } = await supabase
+      .from("subscriptions")
+      .select("service_account_profile_id")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (loadError) {
+      return { ok: false, error: "Failed to retrieve existing booking." };
+    }
+
     const payload: SubscriptionUpdate = await normalizeSubscriptionInput(input, customerId);
     const { error } = await supabase.from("subscriptions").update(payload).eq("id", id);
 
     if (error) {
       return toMutationError("Failed to update booking", error);
+    }
+
+    if (payload.service_account_profile_id) {
+      await syncProfileStatus(payload.service_account_profile_id);
+    }
+    if (oldBooking?.service_account_profile_id && oldBooking.service_account_profile_id !== payload.service_account_profile_id) {
+      await syncProfileStatus(oldBooking.service_account_profile_id);
     }
 
     return { ok: true, error: null };
@@ -360,10 +447,24 @@ export async function updateSubscription(
 }
 
 export async function archiveSubscription(id: string): Promise<SubscriptionMutationResult> {
+  const { data: booking, error: loadError } = await supabase
+    .from("subscriptions")
+    .select("service_account_profile_id")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (loadError) {
+    return { ok: false, error: "Failed to retrieve booking before archive." };
+  }
+
   const { error } = await supabase.from("subscriptions").update({ status: "archived" }).eq("id", id);
 
   if (error) {
     return toMutationError("Failed to archive booking", error);
+  }
+
+  if (booking?.service_account_profile_id) {
+    await syncProfileStatus(booking.service_account_profile_id);
   }
 
   return { ok: true, error: null };
