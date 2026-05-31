@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import { archiveSubscription, createSubscription, updateSubscription } from "@/lib/subscriptions";
-import type { SubscriptionStatus } from "@/types/database";
+import { updateServiceAccountProfile } from "@/lib/service-account-profiles";
+import type { ServiceAccountProfileStatus, SubscriptionStatus } from "@/types/database";
 
 export type BookingActionState = {
   ok: boolean;
@@ -98,4 +99,48 @@ export async function archiveBookingAction(formData: FormData): Promise<void> {
     revalidatePath("/admin/accounts");
     revalidatePath("/admin/dashboard");
   }
+}
+
+export type InlineProfileActionState = {
+  ok: boolean;
+  error: string | null;
+};
+
+const initialInlineProfileActionState: InlineProfileActionState = {
+  ok: false,
+  error: null,
+};
+
+export async function updateInlineProfileAction(
+  previousState: InlineProfileActionState = initialInlineProfileActionState,
+  formData: FormData,
+): Promise<InlineProfileActionState> {
+  void previousState;
+  const serviceAccountId = formValue(formData, "service_account_id");
+  const profileId = formValue(formData, "profile_id");
+  const profileName = formValue(formData, "profile_name");
+  const profilePin = formValue(formData, "profile_pin");
+  const isRentable = formData.get("is_rentable") === "on";
+  const status = formValue(formData, "status") as ServiceAccountProfileStatus;
+  const notes = formValue(formData, "notes");
+
+  if (!serviceAccountId || !profileId) {
+    return { ok: false, error: "Service account and profile id are required." };
+  }
+
+  const result = await updateServiceAccountProfile(serviceAccountId, profileId, {
+    profile_name: profileName,
+    profile_pin: profilePin,
+    is_rentable: isRentable,
+    status,
+    notes,
+  });
+
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
+  revalidatePath("/admin/bookings");
+
+  return { ok: true, error: null };
 }

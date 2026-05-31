@@ -43,7 +43,7 @@ export type SubscriptionFormOptionsResult =
   | {
     customers: Pick<Customer, "id" | "name" | "contact_label">[];
     serviceAccounts: Pick<ServiceAccount, "id" | "label" | "service_name">[];
-    profiles: Pick<ServiceAccountProfile, "id" | "service_account_id" | "profile_name" | "profile_pin" | "status">[];
+    profiles: Pick<ServiceAccountProfile, "id" | "service_account_id" | "profile_name" | "profile_pin" | "status" | "is_rentable" | "notes">[];
     rentalPackages: RentalPackage[];
     error: null;
   }
@@ -229,7 +229,7 @@ export async function getSubscriptionFormOptions(): Promise<SubscriptionFormOpti
       .order("label", { ascending: true }),
     supabase
       .from("service_account_profiles")
-      .select("id,service_account_id,profile_name,profile_pin,status")
+      .select("id,service_account_id,profile_name,profile_pin,status,is_rentable,notes")
       .eq("is_rentable", true)
       .neq("status", "archived")
       .order("profile_name", { ascending: true }),
