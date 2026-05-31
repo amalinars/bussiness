@@ -14,6 +14,7 @@ import type {
 } from "@/types/database";
 
 type SubscriptionListRow = Subscription & {
+  end_time: string | null;
   customers: Pick<Customer, "id" | "name" | "contact_label" | "phone"> | null;
   service_accounts: Pick<ServiceAccount, "id" | "label" | "service_name" | "account_identifier"> | null;
   service_account_profiles: Pick<ServiceAccountProfile, "id" | "profile_name" | "profile_pin"> | null;
@@ -21,6 +22,7 @@ type SubscriptionListRow = Subscription & {
 };
 
 export type SubscriptionListItem = Subscription & {
+  end_time: string | null;
   customer: Pick<Customer, "id" | "name" | "contact_label" | "phone"> | null;
   serviceAccount: Pick<ServiceAccount, "id" | "label" | "service_name" | "account_identifier"> | null;
   profile: Pick<ServiceAccountProfile, "id" | "profile_name" | "profile_pin"> | null;
@@ -73,6 +75,7 @@ export type SubscriptionFormInput = {
   start_date: string;
   end_date?: string | null;
   price_snapshot?: string | number | null;
+  end_time?: string | null;
   status?: SubscriptionStatus;
   notes?: string | null;
 };
@@ -179,6 +182,7 @@ async function normalizeSubscriptionInput(input: SubscriptionFormInput, customer
     price_snapshot: price,
     start_date: startDate,
     end_date: emptyToNull(input.end_date) ?? addDays(startDate, rentalPackage.duration_days),
+    end_time: emptyToNull(input.end_time) ?? "23:59:00",
     status,
     notes: emptyToNull(input.notes),
   };

@@ -35,6 +35,7 @@ function bookingInputFromFormData(formData: FormData) {
     start_date: formValue(formData, "start_date"),
     end_date: formValue(formData, "end_date"),
     price_snapshot: formValue(formData, "price_snapshot"),
+    end_time: formValue(formData, "end_time"),
     status: formValue(formData, "status") as SubscriptionStatus,
     notes: formValue(formData, "notes"),
   };

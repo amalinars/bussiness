@@ -112,7 +112,10 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
                       <div className="rounded-base border border-border bg-secondary-background p-2">
                         <p className="text-xs text-muted-foreground">Dates</p>
                         <p>{booking.start_date}</p>
-                        <p className="text-xs">to {booking.end_date}</p>
+                        <p className="text-xs">
+                          to {booking.end_date}
+                          {booking.end_time ? ` at ${booking.end_time.slice(0, 5)}` : ""}
+                        </p>
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center justify-between gap-2 rounded-base border border-border bg-secondary-background p-2">
@@ -164,7 +167,10 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
                       </td>
                       <td className="px-4 py-3 align-top">
                         <div>{booking.start_date}</div>
-                        <div className="text-xs">to {booking.end_date}</div>
+                        <div className="text-xs">
+                          to {booking.end_date}
+                          {booking.end_time ? ` at ${booking.end_time.slice(0, 5)}` : ""}
+                        </div>
                       </td>
                       <td className="px-4 py-3 align-top">Rp {booking.price_snapshot.toLocaleString("id-ID")}</td>
                       <td className="px-4 py-3 align-top">

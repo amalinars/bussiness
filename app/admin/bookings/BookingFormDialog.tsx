@@ -50,6 +50,8 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
   const [selectedProfileId, setSelectedProfileId] = useState(booking?.service_account_profile_id ?? "");
   const [selectedPackageId, setSelectedPackageId] = useState(booking?.rental_package_id ?? options.rentalPackages[0]?.id ?? "");
   const [startDate, setStartDate] = useState(booking?.start_date ?? todayString());
+  const [endDate, setEndDate] = useState(booking?.end_date ?? "");
+  const [endTime, setEndTime] = useState(booking?.end_time ? booking.end_time.slice(0, 5) : "23:59");
   const [price, setPrice] = useState(String(booking?.price_snapshot ?? options.rentalPackages[0]?.default_price ?? 0));
 
   const selectedPackage = useMemo(
@@ -61,7 +63,14 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
       profile.service_account_id === selectedAccountId &&
       (profile.status === "available" || profile.id === booking?.service_account_profile_id),
   );
-  const endDate = addDays(startDate, selectedPackage?.duration_days ?? 0);
+
+  // Initialize end date if not set yet (mainly on mount for add booking)
+  if (!endDate && !booking && startDate && selectedPackage) {
+    setEndDate(addDays(startDate, selectedPackage.duration_days));
+  }
+  if (!endDate && booking) {
+    setEndDate(booking.end_date);
+  }
 
   if (state.ok && open) {
     setOpen(false);
@@ -71,6 +80,12 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
     setSelectedPackageId(packageId);
     const nextPackage = options.rentalPackages.find((rentalPackage) => rentalPackage.id === packageId);
     setPrice(String(nextPackage?.default_price ?? 0));
+    setEndDate(addDays(startDate, nextPackage?.duration_days ?? 0));
+  }
+
+  function handleStartDateChange(date: string) {
+    setStartDate(date);
+    setEndDate(addDays(date, selectedPackage?.duration_days ?? 0));
   }
 
   return (
@@ -88,7 +103,6 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
 
         <form action={formAction} className="space-y-5">
           {booking ? <input type="hidden" name="id" value={booking.id} /> : null}
-          <input type="hidden" name="end_date" value={endDate} />
 
           {!booking ? (
             <div className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-3 md:grid-cols-2">
@@ -251,15 +265,29 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                 type="date"
                 name="start_date"
                 value={startDate}
-                onChange={(event) => setStartDate(event.target.value)}
+                onChange={(event) => handleStartDateChange(event.target.value)}
                 className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
               End date
               <input
-                readOnly
+                required
+                type="date"
+                name="end_date"
                 value={endDate}
+                onChange={(event) => setEndDate(event.target.value)}
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
+              />
+            </label>
+            <label className="space-y-1 text-sm font-heading">
+              End time
+              <input
+                required
+                type="time"
+                name="end_time"
+                value={endTime}
+                onChange={(event) => setEndTime(event.target.value)}
                 className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>

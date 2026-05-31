@@ -97,6 +97,7 @@ export type Subscription = {
   price_snapshot: number;
   start_date: string;
   end_date: string;
+  end_time: string | null;
   status: SubscriptionStatus;
   notes: string | null;
   created_at: string;
@@ -188,6 +189,7 @@ export type SubscriptionInsert = {
   price_snapshot: number;
   start_date: string;
   end_date: string;
+  end_time?: string | null;
   status?: SubscriptionStatus;
   notes?: string | null;
   created_at?: string;
