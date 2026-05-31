@@ -12,9 +12,10 @@ type CustomerActionsProps = {
 
 export function CustomerActions({ customer }: CustomerActionsProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap">
       <CustomerFormDialog customer={customer} />
       <form
+        className="w-full sm:w-auto"
         action={archiveCustomerAction}
         onSubmit={(event) => {
           if (!confirm(`Archive ${customer.name}?`)) {
@@ -23,7 +24,7 @@ export function CustomerActions({ customer }: CustomerActionsProps) {
         }}
       >
         <input type="hidden" name="id" value={customer.id} />
-        <Button type="submit" size="sm" variant="neutral" disabled={customer.status === "archived"}>
+        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={customer.status === "archived"}>
           Archive
         </Button>
       </form>

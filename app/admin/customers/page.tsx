@@ -59,18 +59,51 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
         </div>
       ) : (
         <Card>
-          <CardHeader className="gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-            <div>
-              <CardTitle>Customer list</CardTitle>
-              <CardDescription>
+          <CardHeader className="grid gap-3 px-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-6">
+            <div className="min-w-0">
+              <CardTitle className="text-lg sm:text-xl">Customer list</CardTitle>
+              <CardDescription className="wrap-break-word">
                 {customers.length} {hasFilters ? "matching" : "total"} customer records found.
               </CardDescription>
             </div>
             <CustomerFormDialog />
           </CardHeader>
-          <CardContent>
-            <div className="w-full overflow-x-auto rounded-base border-2 border-border">
-              <table className="w-full border-collapse text-left text-sm font-base">
+          <CardContent className="px-4 sm:px-6">
+            <div className="grid gap-3 md:hidden">
+              {customers.map((customer) => (
+                <div key={customer.id} className="min-w-0 space-y-3 rounded-base border-2 border-border bg-background p-3 shadow-shadow">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="wrap-break-word font-heading font-bold">{customer.name}</p>
+                      <p className="wrap-break-word text-xs font-base text-muted-foreground">{customer.contact_label ?? "No contact label"}</p>
+                    </div>
+                    <StatusBadge tone={customerStatusTone[customer.status]}>{customer.status}</StatusBadge>
+                  </div>
+
+                  <div className="grid gap-2 text-sm font-base">
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <div className="rounded-base border border-border bg-secondary-background p-2">
+                        <p className="text-xs text-muted-foreground">Phone</p>
+                        <p className="wrap-break-word">{customer.phone ?? "No phone"}</p>
+                      </div>
+                      <div className="rounded-base border border-border bg-secondary-background p-2">
+                        <p className="text-xs text-muted-foreground">Email</p>
+                        <p className="wrap-break-word">{customer.email ?? "-"}</p>
+                      </div>
+                    </div>
+                    <div className="rounded-base border border-border bg-secondary-background p-2">
+                      <p className="text-xs text-muted-foreground">Notes</p>
+                      <p className="whitespace-pre-wrap wrap-break-word">{customer.notes ?? "-"}</p>
+                    </div>
+                  </div>
+
+                  <CustomerActions customer={customer} />
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden w-full overflow-x-auto rounded-base border-2 border-border md:block">
+              <table className="min-w-[760px] w-full border-collapse text-left text-sm font-base">
                 <thead className="bg-secondary-background">
                   <tr className="border-b-2 border-border">
                     <th className="px-4 py-3 font-heading">Name</th>
@@ -84,17 +117,17 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
                 <tbody>
                   {customers.map((customer) => (
                     <tr key={customer.id} className="border-b-2 border-border last:border-b-0">
-                      <td className="px-4 py-3 font-heading">{customer.name}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 align-top font-heading">{customer.name}</td>
+                      <td className="px-4 py-3 align-top">
                         <div>{customer.contact_label ?? "-"}</div>
                         <div className="text-xs">{customer.phone ?? "No phone"}</div>
                       </td>
-                      <td className="px-4 py-3">{customer.email ?? "-"}</td>
-                      <td className="px-4 py-3">
+                      <td className="max-w-xs px-4 py-3 align-top wrap-break-word">{customer.email ?? "-"}</td>
+                      <td className="px-4 py-3 align-top">
                         <StatusBadge tone={customerStatusTone[customer.status]}>{customer.status}</StatusBadge>
                       </td>
-                      <td className="px-4 py-3">{customer.notes ?? "-"}</td>
-                      <td className="px-4 py-3">
+                      <td className="max-w-xs px-4 py-3 align-top wrap-break-word">{customer.notes ?? "-"}</td>
+                      <td className="px-4 py-3 align-top">
                         <CustomerActions customer={customer} />
                       </td>
                     </tr>
