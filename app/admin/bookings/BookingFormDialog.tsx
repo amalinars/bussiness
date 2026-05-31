@@ -46,11 +46,13 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
   const action = booking ? updateBookingAction : createBookingAction;
   const [state, formAction, pending] = useActionState(action, initialState);
   const [customerMode, setCustomerMode] = useState<"existing" | "new">("existing");
+  const initialStartDate = booking?.start_date ?? todayString();
+  const initialPackage = options.rentalPackages.find((rentalPackage) => rentalPackage.id === booking?.rental_package_id) ?? options.rentalPackages[0];
   const [selectedAccountId, setSelectedAccountId] = useState(booking?.service_account_id ?? options.serviceAccounts[0]?.id ?? "");
   const [selectedProfileId, setSelectedProfileId] = useState(booking?.service_account_profile_id ?? "");
   const [selectedPackageId, setSelectedPackageId] = useState(booking?.rental_package_id ?? options.rentalPackages[0]?.id ?? "");
-  const [startDate, setStartDate] = useState(booking?.start_date ?? todayString());
-  const [endDate, setEndDate] = useState(booking?.end_date ?? "");
+  const [startDate, setStartDate] = useState(initialStartDate);
+  const [endDate, setEndDate] = useState(booking?.end_date ?? addDays(initialStartDate, initialPackage?.duration_days ?? 0));
   const [endTime, setEndTime] = useState(booking?.end_time ? booking.end_time.slice(0, 5) : "23:59");
   const [price, setPrice] = useState(String(booking?.price_snapshot ?? options.rentalPackages[0]?.default_price ?? 0));
 
@@ -63,18 +65,6 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
       profile.service_account_id === selectedAccountId &&
       (profile.status === "available" || profile.id === booking?.service_account_profile_id),
   );
-
-  // Initialize end date if not set yet (mainly on mount for add booking)
-  if (!endDate && !booking && startDate && selectedPackage) {
-    setEndDate(addDays(startDate, selectedPackage.duration_days));
-  }
-  if (!endDate && booking) {
-    setEndDate(booking.end_date);
-  }
-
-  if (state.ok && open) {
-    setOpen(false);
-  }
 
   function updatePackage(packageId: string) {
     setSelectedPackageId(packageId);

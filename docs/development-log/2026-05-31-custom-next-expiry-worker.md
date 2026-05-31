@@ -42,6 +42,8 @@ Created migration:
 
 The function `riztama_business.complete_expired_bookings()` marks active `booked` subscriptions as `completed` when their `end_date` and `end_time` are past.
 
+A follow-up migration `supabase/migrations/20260531164500_fix_expired_booking_timezone.sql` makes the expiry comparison use business-local time via `timezone('Asia/Jakarta', now())`. This avoids Supabase/Postgres default UTC time making same-day rows appear not expired even though the local UI countdown has already expired.
+
 Existing booking/profile sync trigger then makes the assigned profile `available` when no active `booked` subscription remains.
 
 ## Validation

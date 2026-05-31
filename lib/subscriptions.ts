@@ -266,7 +266,7 @@ export async function getSubscriptions(filters: SubscriptionFilters = {}): Promi
   let query = supabase
     .from("subscriptions")
     .select(`
-      id,customer_id,service_account_id,service_account_profile_id,rental_package_id,package_name_snapshot,duration_days_snapshot,price_snapshot,start_date,end_date,status,notes,created_at,updated_at,
+      id,customer_id,service_account_id,service_account_profile_id,rental_package_id,package_name_snapshot,duration_days_snapshot,price_snapshot,start_date,end_date,end_time,status,notes,created_at,updated_at,
       customers(id,name,contact_label,phone),
       service_accounts(id,label,service_name,account_identifier),
       service_account_profiles(id,profile_name,profile_pin),

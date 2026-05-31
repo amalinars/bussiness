@@ -30,7 +30,8 @@ Already updated via migration `supabase/migrations/20260531050000_add_subscripti
 
 ### Booking List Display
 
-- Updated `app/admin/bookings/page.tsx`:
+- Updated `lib/subscriptions.ts` and `app/admin/bookings/page.tsx`:
+  - The booking list query selects `end_time` from `riztama_business.subscriptions`, so cards, tables, edit dialogs, and countdowns use the saved database value instead of falling back to `23:59`.
   - Show end time alongside end date in both mobile cards and desktop table views: `to {booking.end_date} at {booking.end_time}` format (slicing the time to HH:MM).
 
 ### Booking List & Dashboard Expiration Countdowns
