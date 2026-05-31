@@ -58,6 +58,7 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 
 ### Tables
 
+- Wrap table nodes within `w-full overflow-x-auto` dynamic viewport container tags to prevent neobrutalist grid clipping on mobile displays.
 - Use strong row and column separation.
 - Keep headers clear.
 - Use status badges for scanability.
@@ -81,6 +82,7 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 
 ### Sidebar
 
+- Support collapsible vertical sidebar states using a neobrutalist icon trigger toggle banner for small screen media queries (< md).
 - Keep navigation clear and scannable.
 - Use consistent active states.
 - Use neobrutalist borders or separators where appropriate.

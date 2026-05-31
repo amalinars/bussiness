@@ -31,6 +31,9 @@
 * Temporary Service Account `INSERT` and `UPDATE` RLS policies for the current unauthenticated dev setup.
 * Service Account search and status filtering on the admin Service Accounts list.
 * Real-time database-backed dashboard metrics (customers, active service accounts, available slots, attention flags) and unified recent activity timeline.
+* Collapsible mobile vertical sidebar navigation layout trigger.
+* Responsive viewport scrollable wrappers surrounding datatable nodes.
+
 
 
 ### Changed

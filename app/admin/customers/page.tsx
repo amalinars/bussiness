@@ -69,7 +69,7 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
             <CustomerFormDialog />
           </CardHeader>
           <CardContent>
-            <div className="overflow-hidden rounded-base border-2 border-border">
+            <div className="w-full overflow-x-auto rounded-base border-2 border-border">
               <table className="w-full border-collapse text-left text-sm font-base">
                 <thead className="bg-secondary-background">
                   <tr className="border-b-2 border-border">
