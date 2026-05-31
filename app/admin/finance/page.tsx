@@ -2,6 +2,7 @@ import { connection } from "next/server";
 import { ArrowDownLeft, ArrowUpRight, DollarSign, Percent, X } from "lucide-react";
 
 import { MetricCard } from "@/components/MetricCard";
+import { PendingSubmitButton } from "@/components/PendingSubmitButton";
 import { PageContainer } from "@/components/PageContainer";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -163,13 +164,15 @@ export default async function FinancePage({ searchParams }: FinancePageProps) {
                       {tx.type === "expense" && tx.status !== "cancelled" && (
                         <form action={cancelExpenseAction}>
                           <input type="hidden" name="id" value={tx.id} />
-                          <button
-                            type="submit"
+                          <PendingSubmitButton
+                            idleLabel="Cancel"
+                            pendingLabel="Cancelling..."
                             title="Cancel expense"
-                            className="inline-flex size-8 items-center justify-center rounded-base border-2 border-border bg-rose-300 text-black shadow-shadow hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none transition-all"
+                            size="icon"
+                            className="size-8 bg-rose-300 text-black"
                           >
                             <X className="size-4" />
-                          </button>
+                          </PendingSubmitButton>
                         </form>
                       )}
                     </div>

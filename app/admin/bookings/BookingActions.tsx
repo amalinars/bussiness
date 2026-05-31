@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { PendingSubmitButton } from "@/components/PendingSubmitButton";
 import type { SubscriptionFormOptionsResult, SubscriptionListItem } from "@/lib/subscriptions";
 
 import { archiveBookingAction } from "./actions";
@@ -15,9 +15,9 @@ export function BookingActions({ booking, options }: BookingActionsProps) {
       <BookingFormDialog booking={booking} options={options} />
       <form action={archiveBookingAction} className="w-full sm:w-auto">
         <input type="hidden" name="id" value={booking.id} />
-        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={booking.status === "archived"}>
+        <PendingSubmitButton idleLabel="Archive" pendingLabel="Archiving..." size="sm" variant="neutral" className="w-full sm:w-auto" disabled={booking.status === "archived"}>
           Archive
-        </Button>
+        </PendingSubmitButton>
       </form>
     </div>
   );

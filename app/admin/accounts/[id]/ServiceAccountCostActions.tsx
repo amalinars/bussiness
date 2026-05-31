@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { PendingSubmitButton } from "@/components/PendingSubmitButton";
 import type { ServiceAccountCost } from "@/types/database";
 
 import { cancelServiceAccountCostAction } from "./cost-actions";
@@ -26,9 +26,9 @@ export function ServiceAccountCostActions({ serviceAccountId, cost }: ServiceAcc
       >
         <input type="hidden" name="service_account_id" value={serviceAccountId} />
         <input type="hidden" name="cost_id" value={cost.id} />
-        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={cost.status === "cancelled"}>
+        <PendingSubmitButton idleLabel="Cancel" pendingLabel="Cancelling..." size="sm" variant="neutral" className="w-full sm:w-auto" disabled={cost.status === "cancelled"}>
           Cancel
-        </Button>
+        </PendingSubmitButton>
       </form>
     </div>
   );

@@ -1,8 +1,9 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useTransition, useState } from "react";
 
+import { LoadingDots } from "@/components/LoadingState";
 import { Button } from "@/components/ui/button";
 import { SUBSCRIPTION_STATUSES } from "@/lib/statuses";
 import type { SubscriptionStatus } from "@/types/database";
@@ -22,6 +23,7 @@ export function BookingFilters({ q = "", status = "all", serviceAccountId = "all
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
   const [query, setQuery] = useState(q);
   const [selectedStatus, setSelectedStatus] = useState(status);
   const [selectedServiceAccountId, setSelectedServiceAccountId] = useState(serviceAccountId);
@@ -49,7 +51,9 @@ export function BookingFilters({ q = "", status = "all", serviceAccountId = "all
     }
 
     const search = params.toString();
-    router.push(search ? `${pathname}?${search}` : pathname);
+    startTransition(() => {
+      router.push(search ? `${pathname}?${search}` : pathname);
+    });
   }
 
   function submitFilters(event: FormEvent<HTMLFormElement>) {
@@ -61,7 +65,9 @@ export function BookingFilters({ q = "", status = "all", serviceAccountId = "all
     setQuery("");
     setSelectedStatus("all");
     setSelectedServiceAccountId("all");
-    router.push(pathname);
+    startTransition(() => {
+      router.push(pathname);
+    });
   }
 
   return (
@@ -108,11 +114,11 @@ export function BookingFilters({ q = "", status = "all", serviceAccountId = "all
           ))}
         </select>
       </label>
-      <Button type="submit" className="w-full">
-        Apply
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {isPending ? <><LoadingDots /> Filtering...</> : "Apply"}
       </Button>
-      <Button type="button" variant="neutral" className="w-full" onClick={clearFilters}>
-        Clear
+      <Button type="button" variant="neutral" className="w-full" onClick={clearFilters} disabled={isPending}>
+        {isPending ? "Loading..." : "Clear"}
       </Button>
     </form>
   );

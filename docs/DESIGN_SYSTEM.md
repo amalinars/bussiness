@@ -82,6 +82,14 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Provide a clear next action when appropriate.
 - Keep the same border, shadow, and color language as the rest of the app.
 
+### Loading States
+
+- Show visible feedback while pages fetch data, filters navigate, and forms submit.
+- Use `PageLoadingState`, `LoadingStrip`, `LoadingCard`, and `LoadingDots` for consistent neobrutalist loading surfaces.
+- Use route-level `loading.tsx` files for active admin pages so navigation does not appear blank.
+- Use pending submit buttons or disabled form fieldsets during mutations to prevent duplicate actions.
+- Keep loading copy practical, such as `Saving...`, `Archiving...`, `Filtering...`, or `Loading data...`.
+
 ### Sidebar
 
 - Support collapsible vertical sidebar states using a neobrutalist icon trigger toggle banner for small screen media queries (< md).

@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 
+import { LoadingDots } from "@/components/LoadingState";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -51,7 +52,7 @@ export function CustomerFormDialog({ customer }: CustomerFormDialogProps) {
         <form action={formAction} className="space-y-5">
           {customer ? <input type="hidden" name="id" value={customer.id} /> : null}
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <fieldset disabled={pending} className="grid gap-4 sm:grid-cols-2 disabled:opacity-70">
             <label className="space-y-1 text-sm font-heading">
               Name
               <input
@@ -109,14 +110,20 @@ export function CustomerFormDialog({ customer }: CustomerFormDialogProps) {
                 className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
-          </div>
+          </fieldset>
+
+          {pending ? (
+            <p className="flex items-center gap-2 rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-heading">
+              <LoadingDots /> Saving customer...
+            </p>
+          ) : null}
 
           {state.error ? (
             <p className="wrap-break-word rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
           ) : null}
 
           <DialogFooter className="gap-2">
-            <Button type="button" variant="neutral" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
+            <Button type="button" variant="neutral" className="w-full sm:w-auto" onClick={() => setOpen(false)} disabled={pending}>
               Cancel
             </Button>
             <Button type="submit" className="w-full sm:w-auto" disabled={pending}>

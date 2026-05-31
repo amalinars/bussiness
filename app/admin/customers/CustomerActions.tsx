@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { PendingSubmitButton } from "@/components/PendingSubmitButton";
 import type { Customer } from "@/types/database";
 
 import { archiveCustomerAction } from "./actions";
@@ -24,9 +24,9 @@ export function CustomerActions({ customer }: CustomerActionsProps) {
         }}
       >
         <input type="hidden" name="id" value={customer.id} />
-        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={customer.status === "archived"}>
+        <PendingSubmitButton idleLabel="Archive" pendingLabel="Archiving..." size="sm" variant="neutral" className="w-full sm:w-auto" disabled={customer.status === "archived"}>
           Archive
-        </Button>
+        </PendingSubmitButton>
       </form>
     </div>
   );

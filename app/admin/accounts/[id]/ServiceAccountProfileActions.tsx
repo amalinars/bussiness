@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { PendingSubmitButton } from "@/components/PendingSubmitButton";
 import type { ServiceAccountProfile } from "@/types/database";
 
 import { archiveServiceAccountProfileAction } from "./actions";
@@ -26,9 +26,9 @@ export function ServiceAccountProfileActions({ serviceAccountId, profile }: Serv
       >
         <input type="hidden" name="service_account_id" value={serviceAccountId} />
         <input type="hidden" name="profile_id" value={profile.id} />
-        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={profile.status === "archived"}>
+        <PendingSubmitButton idleLabel="Archive" pendingLabel="Archiving..." size="sm" variant="neutral" className="w-full sm:w-auto" disabled={profile.status === "archived"}>
           Archive
-        </Button>
+        </PendingSubmitButton>
       </form>
     </div>
   );

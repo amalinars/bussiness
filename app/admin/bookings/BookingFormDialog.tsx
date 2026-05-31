@@ -2,6 +2,7 @@
 
 import { useActionState, useMemo, useState } from "react";
 
+import { LoadingDots } from "@/components/LoadingState";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -94,6 +95,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
         <form action={formAction} className="space-y-5">
           {booking ? <input type="hidden" name="id" value={booking.id} /> : null}
 
+          <fieldset disabled={pending} className="space-y-5 disabled:opacity-70">
           {!booking ? (
             <div className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-3 md:grid-cols-2">
               <label className="flex items-center gap-2 text-sm font-heading">
@@ -305,13 +307,20 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
               />
             </label>
           </div>
+          </fieldset>
+
+          {pending ? (
+            <p className="flex items-center gap-2 rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-heading">
+              <LoadingDots /> Saving booking...
+            </p>
+          ) : null}
 
           {state.error ? (
             <p className="wrap-break-word rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
           ) : null}
 
           <DialogFooter className="gap-2">
-            <Button type="button" variant="neutral" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
+            <Button type="button" variant="neutral" className="w-full sm:w-auto" onClick={() => setOpen(false)} disabled={pending}>
               Cancel
             </Button>
             <Button type="submit" className="w-full sm:w-auto" disabled={pending}>

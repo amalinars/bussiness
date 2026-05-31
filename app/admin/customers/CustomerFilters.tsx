@@ -1,8 +1,9 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useTransition, useState } from "react";
 
+import { LoadingDots } from "@/components/LoadingState";
 import { Button } from "@/components/ui/button";
 import { CUSTOMER_STATUSES } from "@/lib/statuses";
 import type { CustomerStatus } from "@/types/database";
@@ -16,6 +17,7 @@ export function CustomerFilters({ q = "", status = "all" }: CustomerFiltersProps
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
   const [query, setQuery] = useState(q);
   const [selectedStatus, setSelectedStatus] = useState(status);
 
@@ -36,7 +38,9 @@ export function CustomerFilters({ q = "", status = "all" }: CustomerFiltersProps
     }
 
     const search = params.toString();
-    router.push(search ? `${pathname}?${search}` : pathname);
+    startTransition(() => {
+      router.push(search ? `${pathname}?${search}` : pathname);
+    });
   }
 
   function submitFilters(event: FormEvent<HTMLFormElement>) {
@@ -47,7 +51,9 @@ export function CustomerFilters({ q = "", status = "all" }: CustomerFiltersProps
   function clearFilters() {
     setQuery("");
     setSelectedStatus("all");
-    router.push(pathname);
+    startTransition(() => {
+      router.push(pathname);
+    });
   }
 
   return (
@@ -79,11 +85,11 @@ export function CustomerFilters({ q = "", status = "all" }: CustomerFiltersProps
           ))}
         </select>
       </label>
-      <Button type="submit" className="w-full">
-        Apply
+      <Button type="submit" className="w-full" disabled={isPending}>
+        {isPending ? <><LoadingDots /> Filtering...</> : "Apply"}
       </Button>
-      <Button type="button" variant="neutral" className="w-full" onClick={clearFilters}>
-        Clear
+      <Button type="button" variant="neutral" className="w-full" onClick={clearFilters} disabled={isPending}>
+        {isPending ? "Loading..." : "Clear"}
       </Button>
     </form>
   );

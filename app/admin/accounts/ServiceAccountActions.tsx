@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 
+import { PendingSubmitButton } from "@/components/PendingSubmitButton";
 import { Button } from "@/components/ui/button";
 import type { ServiceAccount } from "@/types/database";
 
@@ -29,9 +30,9 @@ export function ServiceAccountActions({ account }: ServiceAccountActionsProps) {
         }}
       >
         <input type="hidden" name="id" value={account.id} />
-        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={account.status === "archived"}>
+        <PendingSubmitButton idleLabel="Archive" pendingLabel="Archiving..." size="sm" variant="neutral" className="w-full sm:w-auto" disabled={account.status === "archived"}>
           Archive
-        </Button>
+        </PendingSubmitButton>
       </form>
     </div>
   );
