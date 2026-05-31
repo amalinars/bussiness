@@ -86,7 +86,7 @@ Planned features:
 - Secure handling approach for sensitive account data
 
 Current status:
-Active MVP module. The admin Service Accounts page reads from `riztama_business.service_accounts` through the typed Supabase client and `lib/service-accounts.ts`. Service account create, edit, and archive-only actions are available through neobrutalist dialog forms. Slot counts are validated so used slots cannot exceed total slots. Empty and load-error states use the shared `EmptyState` component. Account detail views, password storage, credential management, and relationships to future tables are not implemented yet.
+Active MVP module. The admin Service Accounts page reads from `riztama_business.service_accounts` through the typed Supabase client and `lib/service-accounts.ts`. Service account create, edit, and archive-only actions are available through neobrutalist dialog forms. The list supports URL-backed search across label, service name, account identifier, and credential reference plus status filtering. Slot counts are validated so used slots cannot exceed total slots. Empty, no-match, and load-error states use the shared `EmptyState` component. Account detail views, password storage, credential management, and relationships to future tables are not implemented yet.
 
 Future improvements:
 Encrypted credential handling, slot history, account health tracking, and audit logs.

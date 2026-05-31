@@ -34,6 +34,11 @@ export type ServiceAccountMutationResult =
     error: string;
   };
 
+export type ServiceAccountFilters = {
+  q?: string;
+  status?: ServiceAccountStatus | "all";
+};
+
 function emptyToNull(value: FormDataEntryValue | string | null | undefined) {
   if (typeof value !== "string") {
     return null;
@@ -109,12 +114,25 @@ function toMutationError(action: string, error: unknown): ServiceAccountMutation
   };
 }
 
-export async function getServiceAccounts(): Promise<ServiceAccountsResult> {
-  const { data, error } = await supabase
-    .from("service_accounts")
-    .select(
-      "id,label,service_name,account_identifier,credential_reference,total_slots,used_slots,status,renewal_date,notes,created_at,updated_at",
-    )
+export async function getServiceAccounts(filters: ServiceAccountFilters = {}): Promise<ServiceAccountsResult> {
+  let query = supabase.from("service_accounts").select(
+    "id,label,service_name,account_identifier,credential_reference,total_slots,used_slots,status,renewal_date,notes,created_at,updated_at",
+  );
+
+  if (filters.status && filters.status !== "all") {
+    query = query.eq("status", filters.status);
+  }
+
+  const search = filters.q?.trim();
+
+  if (search) {
+    const escapedSearch = search.replaceAll("%", "\\%").replaceAll("_", "\\_");
+    query = query.or(
+      `label.ilike.%${escapedSearch}%,service_name.ilike.%${escapedSearch}%,account_identifier.ilike.%${escapedSearch}%,credential_reference.ilike.%${escapedSearch}%`,
+    );
+  }
+
+  const { data, error } = await query
     .order("service_name", { ascending: true })
     .order("label", { ascending: true });
 

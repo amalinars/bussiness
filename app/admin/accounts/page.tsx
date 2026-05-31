@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getServiceAccounts } from "@/lib/service-accounts";
 
 import { ServiceAccountActions } from "./ServiceAccountActions";
+import { ServiceAccountFilters } from "./ServiceAccountFilters";
 import { ServiceAccountFormDialog } from "./ServiceAccountFormDialog";
 
 const serviceAccountStatusTone = {
@@ -17,10 +18,25 @@ const serviceAccountStatusTone = {
   archived: "neutral",
 } as const;
 
-export default async function ServiceAccountsPage() {
+type ServiceAccountsPageProps = {
+  searchParams: Promise<{
+    q?: string;
+    status?: string;
+  }>;
+};
+
+export default async function ServiceAccountsPage({ searchParams }: ServiceAccountsPageProps) {
   await connection();
 
-  const { data: serviceAccounts, error } = await getServiceAccounts();
+  const params = await searchParams;
+  const status = serviceAccountStatusTone[params.status as keyof typeof serviceAccountStatusTone] ? params.status : "all";
+  const filters = {
+    q: params.q ?? "",
+    status: status as keyof typeof serviceAccountStatusTone | "all",
+  };
+  const hasFilters = Boolean(filters.q || filters.status !== "all");
+
+  const { data: serviceAccounts, error } = await getServiceAccounts(filters);
 
   return (
     <PageContainer
@@ -28,14 +44,19 @@ export default async function ServiceAccountsPage() {
       eyebrow="Active MVP module"
       description="Service account inventory from the initial Supabase database foundation."
     >
+      <ServiceAccountFilters q={filters.q} status={filters.status} />
       {error ? (
         <EmptyState title="Service account data unavailable" description={error} />
       ) : serviceAccounts.length === 0 ? (
         <div className="space-y-4">
           <ServiceAccountFormDialog />
           <EmptyState
-            title="No service accounts yet"
-            description="The service_accounts table is connected. Add the first service account to start managing slot capacity."
+            title={hasFilters ? "No matching service accounts" : "No service accounts yet"}
+            description={
+              hasFilters
+                ? "Try a different search or status filter."
+                : "The service_accounts table is connected. Add the first service account to start managing slot capacity."
+            }
           />
         </div>
       ) : (
@@ -43,7 +64,9 @@ export default async function ServiceAccountsPage() {
           <CardHeader className="gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
             <div>
               <CardTitle>Service account list</CardTitle>
-              <CardDescription>{serviceAccounts.length} service account records loaded from Supabase.</CardDescription>
+              <CardDescription>
+                {serviceAccounts.length} {hasFilters ? "matching" : "total"} service account records loaded from Supabase.
+              </CardDescription>
             </div>
             <ServiceAccountFormDialog />
           </CardHeader>
