@@ -2,7 +2,7 @@
 
 Each module should visually follow the same neobrutalist dashboard style: thick borders, hard offset shadows, flat colors, chunky controls, and clear hierarchy.
 
-Current active MVP modules are Dashboard, Customers, Service Accounts, and Bookings. Database scope now includes customers, service accounts, service account profiles, rental packages, and subscriptions/bookings. Other modules remain planned for later and should not be implemented until explicitly requested.
+Current active MVP modules are Dashboard, Customers, Service Accounts, Bookings, and Financials. Database scope now includes customers, service accounts, service account profiles, service account costs, rental packages, and subscriptions/bookings. Other modules remain planned for later and should not be implemented until explicitly requested.
 
 ## Dashboard
 
@@ -112,6 +112,20 @@ Active MVP module exposed as the Bookings sidebar page. The page reads `riztama_
 
 Future improvements:
 Recurring renewal workflows, advanced reminders, subscription history, and automated status updates.
+
+## Financials
+
+Purpose:
+Track subscription cash flow, supplier/service account costs, net profit, and per-account unit economics.
+
+Main data handled:
+Subscription price snapshots from `riztama_business.subscriptions`, service account expense records from `riztama_business.service_account_costs`, month filters, trend summaries, and combined ledger rows.
+
+Current status:
+Active MVP module exposed as the Financials sidebar page. The page reads finance aggregates through `lib/finance.ts`, records supplier expenses through `lib/service-account-costs.ts`, supports URL-backed month filtering with a small client filter component, renders cash-flow metrics, a Recharts-powered neobrutalist trend chart, a combined income/expense ledger, and per-service-account unit economics. Expense cancellation marks rows `cancelled` instead of deleting them.
+
+Future improvements:
+Payment reconciliation, exports, custom date ranges, receivables/payables separation, and richer profit analytics.
 
 ## Payments
 

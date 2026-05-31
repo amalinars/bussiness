@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CalendarCheck, LayoutDashboard, Server, UsersRound, Menu, X } from "lucide-react";
+import { CalendarCheck, LayoutDashboard, Server, UsersRound, Menu, X, WalletCards } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -13,6 +13,7 @@ const navigationItems = [
   { title: "Customers", href: "/admin/customers", icon: UsersRound },
   { title: "Service Accounts", href: "/admin/accounts", icon: Server },
   { title: "Bookings", href: "/admin/bookings", icon: CalendarCheck },
+  { title: "Financials", href: "/admin/finance", icon: WalletCards },
 ];
 
 type AppSidebarProps = {
