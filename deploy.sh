@@ -6,6 +6,9 @@ APP_DIR="/home/ubuntu/apps/bussiness"
 PM2_NAME="bussiness"
 PORT=3015
 
+# Force use of Node 22 path since non-interactive SSH uses default system /usr/bin/node (v18)
+export PATH="/home/ubuntu/.local/bin:/home/ubuntu/.hermes/node/bin:$PATH"
+
 echo "=== CICD Deploy: Starting ==="
 cd "$APP_DIR"
 
