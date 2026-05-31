@@ -43,18 +43,19 @@ export function FinanceChart({ data }: FinanceChartProps) {
 
   return (
     <div className="w-full">
-      <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
-        <BarChart
-          accessibilityLayer
-          data={data}
-          margin={{
-            top: 20,
-            right: 12,
-            left: 12,
-            bottom: 5,
-          }}
-          barGap={6}
-        >
+      <div className="w-full overflow-x-auto pb-2">
+        <ChartContainer config={chartConfig} className="h-[260px] min-h-0 min-w-[520px] w-full sm:h-[300px]">
+          <BarChart
+            accessibilityLayer
+            data={data}
+            margin={{
+              top: 16,
+              right: 4,
+              left: 0,
+              bottom: 5,
+            }}
+            barGap={6}
+          >
           <CartesianGrid
             strokeDasharray="4 4"
             stroke="#000000"
@@ -66,12 +67,15 @@ export function FinanceChart({ data }: FinanceChartProps) {
             tickLine={false}
             tickMargin={10}
             axisLine={{ stroke: "#000000", strokeWidth: 2 }}
+            tick={{ fontSize: 10 }}
             className="font-heading font-bold"
           />
           <YAxis
+            width={56}
             tickLine={false}
-            tickMargin={10}
+            tickMargin={6}
             axisLine={{ stroke: "#000000", strokeWidth: 2 }}
+            tick={{ fontSize: 10 }}
             tickFormatter={formatYAxis}
             className="font-base"
           />
@@ -99,16 +103,17 @@ export function FinanceChart({ data }: FinanceChartProps) {
             stroke="#000000"
             strokeWidth={2}
           />
-        </BarChart>
-      </ChartContainer>
-      <div className="mt-4 flex flex-wrap justify-center gap-6 rounded-base border-2 border-border bg-background p-3 font-base text-sm shadow-shadow">
+          </BarChart>
+        </ChartContainer>
+      </div>
+      <div className="mt-4 flex flex-wrap justify-center gap-2 rounded-base border-2 border-border bg-background p-3 font-base text-xs shadow-shadow sm:gap-6 sm:text-sm">
         <div className="flex items-center gap-2">
           <div className="size-4 rounded-sm border-2 border-border bg-main" style={{ backgroundColor: "#86efac" }} />
-          <span>Income (Pemasukan)</span>
+          <span className="wrap-break-word">Income (Pemasukan)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="size-4 rounded-sm border-2 border-border bg-main" style={{ backgroundColor: "#fda4af" }} />
-          <span>Expense (Pengeluaran)</span>
+          <span className="wrap-break-word">Expense (Pengeluaran)</span>
         </div>
       </div>
     </div>

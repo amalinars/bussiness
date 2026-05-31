@@ -67,23 +67,23 @@ export function BookingFilters({ q = "", status = "all", serviceAccountId = "all
   return (
     <form
       onSubmit={submitFilters}
-      className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow md:grid-cols-[1fr_220px_180px_auto_auto] md:items-end"
+      className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow sm:grid-cols-2 lg:grid-cols-[1fr_220px_180px_auto_auto] lg:items-end"
     >
-      <label className="space-y-1 text-sm font-heading">
+      <label className="min-w-0 space-y-1 text-sm font-heading sm:col-span-2 lg:col-span-1">
         Search booking
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Customer, account, profile, package..."
-          className="w-full rounded-base border-2 border-border bg-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+          placeholder="Customer, account, package..."
+          className="min-w-0 w-full rounded-base border-2 border-border bg-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
         />
       </label>
-      <label className="space-y-1 text-sm font-heading">
+      <label className="min-w-0 space-y-1 text-sm font-heading">
         Service account
         <select
           value={selectedServiceAccountId}
           onChange={(event) => setSelectedServiceAccountId(event.target.value)}
-          className="w-full rounded-base border-2 border-border bg-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+          className="min-w-0 w-full rounded-base border-2 border-border bg-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
         >
           <option value="all">All accounts</option>
           {serviceAccounts.map((account) => (
@@ -93,12 +93,12 @@ export function BookingFilters({ q = "", status = "all", serviceAccountId = "all
           ))}
         </select>
       </label>
-      <label className="space-y-1 text-sm font-heading">
+      <label className="min-w-0 space-y-1 text-sm font-heading">
         Status
         <select
           value={selectedStatus}
           onChange={(event) => setSelectedStatus(event.target.value as SubscriptionStatus | "all")}
-          className="w-full rounded-base border-2 border-border bg-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+          className="min-w-0 w-full rounded-base border-2 border-border bg-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
         >
           <option value="all">all</option>
           {SUBSCRIPTION_STATUSES.map((subscriptionStatus) => (
@@ -108,8 +108,10 @@ export function BookingFilters({ q = "", status = "all", serviceAccountId = "all
           ))}
         </select>
       </label>
-      <Button type="submit">Apply</Button>
-      <Button type="button" variant="neutral" onClick={clearFilters}>
+      <Button type="submit" className="w-full">
+        Apply
+      </Button>
+      <Button type="button" variant="neutral" className="w-full" onClick={clearFilters}>
         Clear
       </Button>
     </form>

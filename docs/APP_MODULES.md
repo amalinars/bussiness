@@ -108,7 +108,7 @@ Planned features:
 - Filtering by status and platform
 
 Current status:
-Active MVP module exposed as the Bookings sidebar page. The page reads `riztama_business.subscriptions` with related customers, service accounts, service account profiles, and rental package snapshots through `lib/subscriptions.ts`. Booking create/edit/archive actions use neobrutalist dialogs, URL-backed search/status/service-account filters, package-driven price/end-date defaults, and inline customer creation for new booking flows. Booking status changes now sync profile availability automatically: `booked` marks the assigned profile `occupied`, while `completed`, `cancelled`, or `archived` returns the profile to `available` when no active booking remains.
+Active MVP module exposed as the Bookings sidebar page. The page reads `riztama_business.subscriptions` with related customers, service accounts, service account profiles, and rental package snapshots through `lib/subscriptions.ts`. Booking create/edit/archive actions use neobrutalist dialogs, URL-backed search/status/service-account filters, package-driven price/end-date defaults, and inline customer creation for new booking flows. The booking list uses mobile card layouts on phone screens and a table layout on larger screens. Booking status changes now sync profile availability automatically: `booked` marks the assigned profile `occupied`, while `completed`, `cancelled`, or `archived` returns the profile to `available` when no active booking remains.
 
 Future improvements:
 Recurring renewal workflows, advanced reminders, subscription history, and automated status updates.

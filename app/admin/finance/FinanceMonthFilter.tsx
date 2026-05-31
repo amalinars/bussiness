@@ -18,13 +18,13 @@ export function FinanceMonthFilter({ selectedMonth, availableMonths }: FinanceMo
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <label className="text-sm font-heading">
+    <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
+      <label className="flex w-full flex-col gap-1 text-sm font-heading sm:w-auto sm:flex-row sm:items-center">
         Filter by Month:
         <select
           name="month"
           value={selectedMonth}
-          className="ml-2 rounded-base border-2 border-border bg-background px-3 py-1.5 font-base outline-none focus:ring-2 focus:ring-border"
+          className="w-full rounded-base border-2 border-border bg-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border sm:ml-2 sm:w-auto sm:py-1.5"
           onChange={(event) => handleMonthChange(event.target.value)}
         >
           <option value="">All-time</option>
@@ -36,7 +36,7 @@ export function FinanceMonthFilter({ selectedMonth, availableMonths }: FinanceMo
         </select>
       </label>
       {selectedMonth ? (
-        <Button type="button" variant="neutral" size="sm" onClick={() => handleMonthChange("")}>
+        <Button type="button" variant="neutral" size="sm" className="w-full sm:w-auto" onClick={() => handleMonthChange("")}>
           <X className="size-3" /> Clear Filter
         </Button>
       ) : null}

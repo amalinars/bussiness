@@ -93,7 +93,7 @@ export default async function FinancePage({ searchParams }: FinancePageProps) {
       description="Manage cash flow, track platform supplier expenses, and review unit economics per account."
     >
       {/* Month Filter Selector and Expense Action Form */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow">
+      <div className="flex flex-col items-stretch justify-between gap-4 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow sm:flex-row sm:items-center">
         <FinanceMonthFilter selectedMonth={selectedMonth} availableMonths={availableMonths} />
 
         <ExpenseFormDialog accounts={accounts} />
@@ -108,16 +108,16 @@ export default async function FinancePage({ searchParams }: FinancePageProps) {
 
       {/* Neobrutalism Financial Trend Chart */}
       <Card className="bg-secondary-background">
-        <CardHeader>
-          <CardTitle className="text-xl font-heading font-black">Monthly Cash Flow Trend (Last 6 Months)</CardTitle>
+        <CardHeader className="px-4 sm:px-6">
+          <CardTitle className="text-lg font-heading font-black sm:text-xl">Monthly Cash Flow Trend (Last 6 Months)</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           {trends.length > 0 ? (
-            <div className="rounded-base border-2 border-border bg-background p-4 shadow-shadow">
+            <div className="rounded-base border-2 border-border bg-background p-2 shadow-shadow sm:p-4">
               <FinanceChart data={trends} />
             </div>
           ) : (
-            <div className="rounded-base border-2 border-dashed border-border p-8 text-center">
+            <div className="rounded-base border-2 border-dashed border-border p-4 text-center sm:p-8">
               <p className="text-muted-foreground font-base">No cash flow trend data available.</p>
             </div>
           )}
@@ -129,30 +129,30 @@ export default async function FinancePage({ searchParams }: FinancePageProps) {
 
         {/* Ledgers Transaction List */}
         <Card className="bg-secondary-background">
-          <CardHeader>
-            <CardTitle className="text-xl font-heading font-black">Combined Transaction Ledger</CardTitle>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg font-heading font-black sm:text-xl">Combined Transaction Ledger</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6">
             {filteredLedger.length > 0 ? (
               <div className="space-y-3">
                 {filteredLedger.map((tx) => (
                   <div
                     key={tx.id}
-                    className="flex flex-wrap items-center justify-between gap-3 rounded-base border-2 border-border bg-background p-4 shadow-shadow"
+                    className="flex flex-col items-stretch justify-between gap-3 rounded-base border-2 border-border bg-background p-3 shadow-shadow sm:flex-row sm:items-center sm:p-4"
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
                         <StatusBadge tone={tx.type === "income" ? "active" : "warning"}>
                           {tx.type === "income" ? "+" : "-"} {tx.type.toUpperCase()}
                         </StatusBadge>
-                        <p className="font-heading font-bold">{tx.label}</p>
+                        <p className="min-w-0 wrap-break-word font-heading font-bold">{tx.label}</p>
                       </div>
-                      <p className="text-sm font-base text-muted-foreground">{tx.description}</p>
-                      <p className="text-xs font-base text-muted-foreground/80">Date: {tx.date}</p>
+                      <p className="wrap-break-word text-sm font-base text-muted-foreground">{tx.description}</p>
+                      <p className="wrap-break-word text-xs font-base text-muted-foreground/80">Date: {tx.date}</p>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                      <div className="text-right">
+                    <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end sm:gap-4">
+                      <div className="text-left sm:text-right">
                         <p className={`font-heading font-bold text-lg ${tx.type === "income" ? "text-green-600" : "text-red-600"}`}>
                           {tx.type === "income" ? "+" : "-"} Rp {tx.amount.toLocaleString("id-ID")}
                         </p>
@@ -177,7 +177,7 @@ export default async function FinancePage({ searchParams }: FinancePageProps) {
                 ))}
               </div>
             ) : (
-              <div className="rounded-base border-2 border-dashed border-border p-8 text-center bg-background">
+              <div className="rounded-base border-2 border-dashed border-border bg-background p-4 text-center sm:p-8">
                 <p className="text-muted-foreground font-base">No transaction ledger records found.</p>
               </div>
             )}
@@ -186,40 +186,40 @@ export default async function FinancePage({ searchParams }: FinancePageProps) {
 
         {/* Unit Economics table per Service Account */}
         <Card className="bg-secondary-background">
-          <CardHeader>
-            <CardTitle className="text-xl font-heading font-black">Service Account Unit Economics</CardTitle>
+          <CardHeader className="px-4 sm:px-6">
+            <CardTitle className="text-lg font-heading font-black sm:text-xl">Service Account Unit Economics</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6">
             {unitEconomics.length > 0 ? (
               <div className="space-y-4">
                 {unitEconomics.map((ec) => (
                   <div
                     key={ec.accountId}
-                    className="rounded-base border-2 border-border bg-background p-4 shadow-shadow space-y-3"
+                    className="space-y-3 rounded-base border-2 border-border bg-background p-3 shadow-shadow sm:p-4"
                   >
-                    <div>
-                      <p className="font-heading font-bold text-lg">{ec.accountLabel}</p>
-                      <p className="text-sm font-base text-muted-foreground">{ec.serviceName}</p>
+                    <div className="min-w-0">
+                      <p className="wrap-break-word font-heading text-lg font-bold">{ec.accountLabel}</p>
+                      <p className="wrap-break-word text-sm font-base text-muted-foreground">{ec.serviceName}</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-sm font-base bg-secondary-background p-2.5 rounded-base border border-border">
-                      <div className="space-y-1">
-                        <p className="text-muted-foreground text-xs">Revenue:</p>
-                        <p className="font-bold text-green-600">Rp {ec.revenue.toLocaleString("id-ID")}</p>
+                    <div className="grid grid-cols-1 gap-2 rounded-base border border-border bg-secondary-background p-2.5 text-sm font-base sm:grid-cols-2">
+                      <div className="min-w-0 space-y-1">
+                        <p className="text-xs text-muted-foreground">Revenue:</p>
+                        <p className="wrap-break-word font-bold text-green-600">Rp {ec.revenue.toLocaleString("id-ID")}</p>
                       </div>
-                      <div className="space-y-1">
-                        <p className="text-muted-foreground text-xs">Expense (Costs):</p>
-                        <p className="font-bold text-red-600">Rp {ec.expense.toLocaleString("id-ID")}</p>
+                      <div className="min-w-0 space-y-1">
+                        <p className="text-xs text-muted-foreground">Expense (Costs):</p>
+                        <p className="wrap-break-word font-bold text-red-600">Rp {ec.expense.toLocaleString("id-ID")}</p>
                       </div>
-                      <div className="space-y-1 border-t border-border/50 pt-2 col-span-2 flex justify-between items-center">
+                      <div className="col-span-1 flex items-center justify-between gap-3 border-t border-border/50 pt-2 sm:col-span-2">
                         <span>Net Profit:</span>
-                        <span className={`font-bold ${ec.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
+                        <span className={`wrap-break-word text-right font-bold ${ec.profit >= 0 ? "text-green-600" : "text-red-600"}`}>
                           Rp {ec.profit.toLocaleString("id-ID")}
                         </span>
                       </div>
-                      <div className="border-t border-border/50 pt-2 col-span-2 flex justify-between items-center">
+                      <div className="col-span-1 flex items-center justify-between gap-3 border-t border-border/50 pt-2 sm:col-span-2">
                         <span>Margin:</span>
-                        <span className={`font-bold ${ec.margin >= 30 ? "text-green-600" : ec.margin > 0 ? "text-yellow-600" : "text-red-600"}`}>
+                        <span className={`text-right font-bold ${ec.margin >= 30 ? "text-green-600" : ec.margin > 0 ? "text-yellow-600" : "text-red-600"}`}>
                           {ec.margin}%
                         </span>
                       </div>
@@ -228,7 +228,7 @@ export default async function FinancePage({ searchParams }: FinancePageProps) {
                 ))}
               </div>
             ) : (
-              <div className="rounded-base border-2 border-dashed border-border p-8 text-center bg-background">
+              <div className="rounded-base border-2 border-dashed border-border bg-background p-4 text-center sm:p-8">
                 <p className="text-muted-foreground font-base">No account financials found.</p>
               </div>
             )}

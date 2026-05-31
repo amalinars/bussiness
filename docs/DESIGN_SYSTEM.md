@@ -58,12 +58,14 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 
 ### Tables
 
-- Wrap table nodes within `w-full overflow-x-auto` dynamic viewport container tags to prevent neobrutalist grid clipping on mobile displays.
+- Prefer mobile card/list alternatives for dense data tables on phone screens; use the table view from tablet/desktop breakpoints.
+- If a true table must remain visible on mobile, wrap it within `w-full overflow-x-auto` dynamic viewport container tags to prevent neobrutalist grid clipping.
 - Use strong row and column separation.
 - Keep headers clear.
 - Use status badges for scanability.
 - Keep actions predictable and aligned.
 - Avoid overcrowding table rows.
+- Keep mobile card actions full-width or large enough to tap comfortably.
 
 ### Badges
 
@@ -96,6 +98,14 @@ The UI should feel friendly, clear, and direct. It should not feel overly corpor
 - Use clear hierarchy.
 - Avoid large marketing-style hero treatments inside the admin dashboard.
 - Use compact scope or status badges when useful.
+
+### Financial Charts and Ledgers
+
+- On mobile, keep dense charts inside a local horizontal scroll container so the whole page does not overflow.
+- Use compact chart tick labels and wrap chart legends when labels are long.
+- Stack financial ledger rows on phones, with amount/action controls below the description.
+- Use breakable text for customer, account, and ledger descriptions so long business labels do not clip.
+- Keep dialog forms scrollable within the viewport on short phone screens.
 
 ### Metric Cards
 

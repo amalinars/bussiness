@@ -63,8 +63,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
   );
   const endDate = addDays(startDate, selectedPackage?.duration_days ?? 0);
 
-  async function submitAction(formData: FormData) {
-    await formAction(formData);
+  if (state.ok && open) {
     setOpen(false);
   }
 
@@ -77,22 +76,22 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" size={booking ? "sm" : "default"} variant={booking ? "neutral" : "default"}>
+        <Button type="button" size={booking ? "sm" : "default"} variant={booking ? "neutral" : "default"} className="w-full sm:w-auto">
           {booking ? "Edit" : "Add booking"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-4xl">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:max-w-4xl sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black">{booking ? "Edit booking" : "Add booking"}</DialogTitle>
+          <DialogTitle className="text-xl font-black sm:text-2xl">{booking ? "Edit booking" : "Add booking"}</DialogTitle>
           <DialogDescription>Create a booking from customer, account profile, and rental package.</DialogDescription>
         </DialogHeader>
 
-        <form action={submitAction} className="space-y-5">
+        <form action={formAction} className="space-y-5">
           {booking ? <input type="hidden" name="id" value={booking.id} /> : null}
           <input type="hidden" name="end_date" value={endDate} />
 
           {!booking ? (
-            <div className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-3 sm:grid-cols-2">
+            <div className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-3 md:grid-cols-2">
               <label className="flex items-center gap-2 text-sm font-heading">
                 <input
                   type="radio"
@@ -118,15 +117,15 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
             <input type="hidden" name="customer_mode" value="existing" />
           )}
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-2">
             {customerMode === "existing" || booking ? (
-              <label className="space-y-1 text-sm font-heading sm:col-span-2">
+              <label className="space-y-1 text-sm font-heading md:col-span-2">
                 Customer
                 <select
                   required
                   name="customer_id"
                   defaultValue={booking?.customer_id ?? ""}
-                  className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                  className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                 >
                   <option value="">Select customer</option>
                   {options.customers.map((customer) => (
@@ -137,27 +136,27 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                 </select>
               </label>
             ) : (
-              <div className="grid gap-4 sm:col-span-2 sm:grid-cols-2">
+              <div className="grid gap-4 md:col-span-2 md:grid-cols-2">
                 <label className="space-y-1 text-sm font-heading">
                   New customer name
                   <input
                     required
                     name="new_customer_name"
-                    className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                    className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                   />
                 </label>
                 <label className="space-y-1 text-sm font-heading">
                   Contact label
                   <input
                     name="new_customer_contact_label"
-                    className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                    className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                   />
                 </label>
                 <label className="space-y-1 text-sm font-heading">
                   Phone
                   <input
                     name="new_customer_phone"
-                    className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                    className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                   />
                 </label>
                 <label className="space-y-1 text-sm font-heading">
@@ -165,14 +164,14 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                   <input
                     type="email"
                     name="new_customer_email"
-                    className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                    className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                   />
                 </label>
-                <label className="space-y-1 text-sm font-heading sm:col-span-2">
+                <label className="space-y-1 text-sm font-heading md:col-span-2">
                   Customer notes
                   <input
                     name="new_customer_notes"
-                    className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                    className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                   />
                 </label>
               </div>
@@ -188,7 +187,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                   setSelectedAccountId(event.target.value);
                   setSelectedProfileId("");
                 }}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               >
                 <option value="">Select account</option>
                 {options.serviceAccounts.map((account) => (
@@ -205,7 +204,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                 name="service_account_profile_id"
                 value={selectedProfileId}
                 onChange={(event) => setSelectedProfileId(event.target.value)}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               >
                 <option value="">Select profile</option>
                 {availableProfiles.map((profile) => (
@@ -222,7 +221,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                 name="rental_package_id"
                 value={selectedPackageId}
                 onChange={(event) => updatePackage(event.target.value)}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               >
                 <option value="">Select package</option>
                 {options.rentalPackages.map((rentalPackage) => (
@@ -242,7 +241,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                 name="price_snapshot"
                 value={price}
                 onChange={(event) => setPrice(event.target.value)}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -253,7 +252,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                 name="start_date"
                 value={startDate}
                 onChange={(event) => setStartDate(event.target.value)}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -261,7 +260,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
               <input
                 readOnly
                 value={endDate}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -269,7 +268,7 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
               <select
                 name="status"
                 defaultValue={booking?.status ?? "booked"}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               >
                 {SUBSCRIPTION_STATUSES.map((status) => (
                   <option key={status} value={status}>
@@ -278,26 +277,26 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
                 ))}
               </select>
             </label>
-            <label className="space-y-1 text-sm font-heading sm:col-span-2">
+            <label className="space-y-1 text-sm font-heading md:col-span-2">
               Notes
               <textarea
                 name="notes"
                 defaultValue={booking?.notes ?? ""}
                 rows={3}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
           </div>
 
           {state.error ? (
-            <p className="rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
+            <p className="wrap-break-word rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
           ) : null}
 
-          <DialogFooter>
-            <Button type="button" variant="neutral" onClick={() => setOpen(false)}>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="neutral" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={pending}>
+            <Button type="submit" className="w-full sm:w-auto" disabled={pending}>
               {pending ? "Saving..." : "Save booking"}
             </Button>
           </DialogFooter>

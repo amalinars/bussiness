@@ -51,13 +51,13 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" size={expense ? "sm" : "default"} variant={expense ? "neutral" : "default"}>
+        <Button type="button" size={expense ? "sm" : "default"} variant={expense ? "neutral" : "default"} className="w-full sm:w-auto">
           {expense ? "Edit" : "Add Expense"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:max-w-xl sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black">{expense ? "Edit Expense" : "Record Supplier Expense"}</DialogTitle>
+          <DialogTitle className="text-xl font-black sm:text-2xl">{expense ? "Edit Expense" : "Record Supplier Expense"}</DialogTitle>
           <DialogDescription>
             Record costs incurred for supplier accounts (e.g. buying Netflix/Spotify account slots).
           </DialogDescription>
@@ -74,7 +74,7 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
                 name="service_account_id"
                 value={selectedAccountId}
                 onChange={(e) => setSelectedAccountId(e.target.value)}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               >
                 <option value="">Select service account</option>
                 {accounts.map((account) => (
@@ -94,7 +94,7 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
                   name="cost_date"
                   value={costDate}
                   onChange={(e) => setCostDate(e.target.value)}
-                  className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                  className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                 />
               </label>
 
@@ -109,7 +109,7 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
                   placeholder="E.g. 150000"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                  className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                 />
               </label>
             </div>
@@ -123,7 +123,7 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
                   name="period_start"
                   value={periodStart}
                   onChange={(e) => setPeriodStart(e.target.value)}
-                  className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                  className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                 />
               </label>
 
@@ -135,7 +135,7 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
                   name="period_end"
                   value={periodEnd}
                   onChange={(e) => setPeriodEnd(e.target.value)}
-                  className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                  className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
                 />
               </label>
             </div>
@@ -146,7 +146,7 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
                 name="status"
                 value={status}
                 onChange={(e) => setStatus(e.target.value as ServiceAccountCostStatus)}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               >
                 {SERVICE_ACCOUNT_COST_STATUSES.map((statusOption) => (
                   <option key={statusOption} value={statusOption}>
@@ -164,7 +164,7 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={2}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
           </div>
@@ -173,11 +173,11 @@ export function ExpenseFormDialog({ expense, accounts }: ExpenseFormDialogProps)
             <p className="rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
           ) : null}
 
-          <DialogFooter>
-            <Button type="button" variant="neutral" onClick={() => setOpen(false)}>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="neutral" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={pending}>
+            <Button type="submit" className="w-full sm:w-auto" disabled={pending}>
               {pending ? "Saving..." : "Save Expense"}
             </Button>
           </DialogFooter>

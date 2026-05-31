@@ -11,11 +11,11 @@ type BookingActionsProps = {
 
 export function BookingActions({ booking, options }: BookingActionsProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
       <BookingFormDialog booking={booking} options={options} />
-      <form action={archiveBookingAction}>
+      <form action={archiveBookingAction} className="w-full sm:w-auto">
         <input type="hidden" name="id" value={booking.id} />
-        <Button type="submit" size="sm" variant="neutral" disabled={booking.status === "archived"}>
+        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={booking.status === "archived"}>
           Archive
         </Button>
       </form>

@@ -71,18 +71,67 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
         </div>
       ) : (
         <Card>
-          <CardHeader className="gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-            <div>
-              <CardTitle>Booking list</CardTitle>
-              <CardDescription>
+          <CardHeader className="grid gap-3 px-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-6">
+            <div className="min-w-0">
+              <CardTitle className="text-lg sm:text-xl">Booking list</CardTitle>
+              <CardDescription className="wrap-break-word">
                 {bookingsResult.data.length} {hasFilters ? "matching" : "total"} booking records loaded from Supabase.
               </CardDescription>
             </div>
             {canOpenForm ? <BookingFormDialog options={optionsResult} /> : null}
           </CardHeader>
-          <CardContent>
-            <div className="w-full overflow-x-auto rounded-base border-2 border-border">
-              <table className="w-full border-collapse text-left text-sm font-base">
+          <CardContent className="px-4 sm:px-6">
+            <div className="grid gap-3 md:hidden">
+              {bookingsResult.data.map((booking) => (
+                <div key={booking.id} className="min-w-0 space-y-3 rounded-base border-2 border-border bg-background p-3 shadow-shadow">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="wrap-break-word font-heading font-bold">{booking.customer?.name ?? "Unknown customer"}</p>
+                      <p className="wrap-break-word text-xs font-base text-muted-foreground">
+                        {booking.customer?.phone ?? booking.customer?.contact_label ?? "No contact"}
+                      </p>
+                    </div>
+                    <StatusBadge tone={bookingStatusTone[booking.status]}>{booking.status}</StatusBadge>
+                  </div>
+
+                  <div className="grid gap-2 text-sm font-base">
+                    <div className="rounded-base border border-border bg-secondary-background p-2">
+                      <p className="text-xs text-muted-foreground">Account / Profile</p>
+                      <p className="wrap-break-word font-heading font-bold">{booking.serviceAccount?.label ?? "Unknown account"}</p>
+                      <p className="wrap-break-word text-xs">
+                        {booking.profile?.profile_name ?? "Unknown profile"}
+                        {booking.profile?.profile_pin ? ` — PIN ${booking.profile.profile_pin}` : ""}
+                      </p>
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <div className="rounded-base border border-border bg-secondary-background p-2">
+                        <p className="text-xs text-muted-foreground">Package</p>
+                        <p className="wrap-break-word font-heading font-bold">{booking.package_name_snapshot}</p>
+                        <p className="text-xs">{booking.duration_days_snapshot} day(s)</p>
+                      </div>
+                      <div className="rounded-base border border-border bg-secondary-background p-2">
+                        <p className="text-xs text-muted-foreground">Dates</p>
+                        <p>{booking.start_date}</p>
+                        <p className="text-xs">to {booking.end_date}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap items-center justify-between gap-2 rounded-base border border-border bg-secondary-background p-2">
+                      <span className="text-xs text-muted-foreground">Price</span>
+                      <span className="wrap-break-word text-right font-heading font-bold">Rp {booking.price_snapshot.toLocaleString("id-ID")}</span>
+                    </div>
+                    <div className="rounded-base border border-border bg-secondary-background p-2">
+                      <p className="text-xs text-muted-foreground">Notes</p>
+                      <p className="whitespace-pre-wrap wrap-break-word">{booking.notes ?? "-"}</p>
+                    </div>
+                  </div>
+
+                  {canOpenForm ? <BookingActions booking={booking} options={optionsResult} /> : null}
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden w-full overflow-x-auto rounded-base border-2 border-border md:block">
+              <table className="min-w-[980px] w-full border-collapse text-left text-sm font-base">
                 <thead className="bg-secondary-background">
                   <tr className="border-b-2 border-border">
                     <th className="px-4 py-3 font-heading">Customer</th>
@@ -98,31 +147,31 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
                 <tbody>
                   {bookingsResult.data.map((booking) => (
                     <tr key={booking.id} className="border-b-2 border-border last:border-b-0">
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 align-top">
                         <div className="font-heading">{booking.customer?.name ?? "Unknown customer"}</div>
                         <div className="text-xs">{booking.customer?.phone ?? booking.customer?.contact_label ?? "No contact"}</div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 align-top">
                         <div className="font-heading">{booking.serviceAccount?.label ?? "Unknown account"}</div>
                         <div className="text-xs">
                           {booking.profile?.profile_name ?? "Unknown profile"}
                           {booking.profile?.profile_pin ? ` — PIN ${booking.profile.profile_pin}` : ""}
                         </div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 align-top">
                         <div>{booking.package_name_snapshot}</div>
                         <div className="text-xs">{booking.duration_days_snapshot} day(s)</div>
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 align-top">
                         <div>{booking.start_date}</div>
                         <div className="text-xs">to {booking.end_date}</div>
                       </td>
-                      <td className="px-4 py-3">Rp {booking.price_snapshot.toLocaleString("id-ID")}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 align-top">Rp {booking.price_snapshot.toLocaleString("id-ID")}</td>
+                      <td className="px-4 py-3 align-top">
                         <StatusBadge tone={bookingStatusTone[booking.status]}>{booking.status}</StatusBadge>
                       </td>
-                      <td className="px-4 py-3">{booking.notes ?? "-"}</td>
-                      <td className="px-4 py-3">
+                      <td className="max-w-xs px-4 py-3 align-top wrap-break-word">{booking.notes ?? "-"}</td>
+                      <td className="px-4 py-3 align-top">
                         {canOpenForm ? <BookingActions booking={booking} options={optionsResult} /> : null}
                       </td>
                     </tr>
