@@ -53,6 +53,8 @@ export async function createBookingAction(
 
   revalidatePath("/admin/bookings");
   revalidatePath("/admin/customers");
+  revalidatePath("/admin/accounts");
+  revalidatePath("/admin/dashboard");
 
   return { ok: true, error: null };
 }
@@ -75,6 +77,8 @@ export async function updateBookingAction(
   }
 
   revalidatePath("/admin/bookings");
+  revalidatePath("/admin/accounts");
+  revalidatePath("/admin/dashboard");
 
   return { ok: true, error: null };
 }
@@ -90,5 +94,7 @@ export async function archiveBookingAction(formData: FormData): Promise<void> {
 
   if (result.ok) {
     revalidatePath("/admin/bookings");
+    revalidatePath("/admin/accounts");
+    revalidatePath("/admin/dashboard");
   }
 }

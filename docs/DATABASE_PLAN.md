@@ -21,6 +21,7 @@ Current database scope includes:
 - Customers
 - Service Accounts
 - Service Account Profiles
+- Service Account Costs
 - Rental Packages
 - Subscriptions/Bookings
 
@@ -29,6 +30,7 @@ The current business tables inside the `riztama_business` schema are:
 - `riztama_business.customers`
 - `riztama_business.service_accounts`
 - `riztama_business.service_account_profiles`
+- `riztama_business.service_account_costs`
 - `riztama_business.rental_packages`
 - `riztama_business.subscriptions`
 
@@ -348,6 +350,8 @@ Not created:
 - 2026-05-30: Service account profiles were added for Netflix-style profile/PIN management. A service account can have up to 5 active profiles and up to 4 rentable active profiles. See `docs/development-log/2026-05-30-service-account-profiles.md`.
 - 2026-05-31: `account_password` was added to service accounts for the user's private internal spreadsheet migration workflow. See `docs/development-log/2026-05-31-service-account-password-seed.md`.
 - 2026-05-31: Rental packages and subscriptions/bookings were added as the first transaction flow. Bookings use package snapshots and support inline customer creation. See `docs/development-log/2026-05-31-bookings-rental-packages.md`.
+- 2026-05-31: Service account cost history table and monthly spent financial aggregation on the dashboard were introduced using `riztama_business.service_account_costs`. See `docs/development-log/2026-05-31-service-account-costs.md`.
+- 2026-05-31: Automatic sync of booking/subscription status changes to service account profile statuses (occupied/available) and service account used slots via PostgreSQL database triggers. See `docs/development-log/2026-05-31-sync-booking-profile-status.md`.
 
 ## Open Questions
 

@@ -53,25 +53,25 @@ export default async function DashboardPage() {
       tone: "blue" as const,
     },
     {
-      title: "Completed Bookings",
-      value: data.completedBookingsCount.toString(),
-      helper: "Finished rentals from bookings",
-      icon: CheckCircle2,
-      tone: "green" as const,
-    },
-    {
       title: "Booking Value",
       value: `Rp ${data.bookingValue.toLocaleString("id-ID")}`,
-      helper: "From booking price snapshots, not payment table",
+      helper: "All-time total, not payment income",
       icon: WalletCards,
       tone: "pink" as const,
     },
     {
-      title: "Ending Soon",
-      value: data.endingSoonCount.toString(),
-      helper: "Booked rows ending within 3 days",
-      icon: CalendarClock,
+      title: "Monthly Spent",
+      value: `Rp ${data.monthlySpent.toLocaleString("id-ID")}`,
+      helper: "Cost recorded for this current month",
+      icon: WalletCards,
       tone: "yellow" as const,
+    },
+    {
+      title: "Monthly Gross Profit",
+      value: `Rp ${data.monthlyGrossProfit.toLocaleString("id-ID")}`,
+      helper: "Monthly booking value - monthly spent",
+      icon: CheckCircle2,
+      tone: "green" as const,
     },
   ];
 
@@ -110,12 +110,27 @@ export default async function DashboardPage() {
                         <p className="font-heading font-bold">{account.label}</p>
                         <p className="text-sm text-muted-foreground">{account.serviceName}</p>
                       </div>
-                      <p className="font-heading font-bold">Rp {account.bookingValue.toLocaleString("id-ID")}</p>
+                      <div className="text-right">
+                        <p className="font-heading font-bold">Rp {account.bookingValue.toLocaleString("id-ID")}</p>
+                        <p className="text-xs text-muted-foreground">Monthly value: Rp {account.monthlyBookingValue.toLocaleString("id-ID")}</p>
+                      </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="mb-3 flex flex-wrap gap-2">
                       <StatusBadge tone="info">{account.totalBookings} total</StatusBadge>
                       <StatusBadge tone="active">{account.activeBookings} active</StatusBadge>
                       <StatusBadge tone="neutral">{account.completedBookings} completed</StatusBadge>
+                    </div>
+                    <div className="rounded-base border border-border bg-secondary-background p-2 text-xs font-base space-y-1">
+                      <div className="flex justify-between">
+                        <span>Spent (this month):</span>
+                        <span className="font-bold">Rp {account.monthlySpent.toLocaleString("id-ID")}</span>
+                      </div>
+                      <div className="flex justify-between border-t border-border/50 pt-1">
+                        <span>Gross profit:</span>
+                        <span className={`font-bold ${account.monthlyGrossProfit >= 0 ? "text-green-600" : "text-red-600"}`}>
+                          Rp {account.monthlyGrossProfit.toLocaleString("id-ID")}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}

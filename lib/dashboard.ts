@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { ServiceAccount, Subscription } from "@/types/database";
+import type { ServiceAccount, ServiceAccountCost, Subscription } from "@/types/database";
 
 type DashboardSubscriptionRow = Pick<
   Subscription,
@@ -18,6 +18,11 @@ type DashboardSubscriptionRow = Pick<
   service_account_profiles: { profile_name: string; profile_pin: string | null } | null;
 };
 
+type DashboardServiceAccountCostRow = Pick<
+  ServiceAccountCost,
+  "id" | "service_account_id" | "cost_date" | "period_start" | "period_end" | "amount" | "status"
+>;
+
 function toDateOnly(date: Date) {
   return date.toISOString().slice(0, 10);
 }
@@ -29,9 +34,20 @@ function formatDateOnly(dateValue: string) {
   });
 }
 
+function isInDateRange(dateValue: string, startDate: string, endDate: string) {
+  return dateValue >= startDate && dateValue <= endDate;
+}
+
+function overlapsDateRange(startA: string, endA: string, startB: string, endB: string) {
+  return startA <= endB && endA >= startB;
+}
+
 export async function getDashboardData() {
   const today = new Date();
   const todayDate = toDateOnly(today);
+  const currentMonthStart = `${todayDate.slice(0, 7)}-01`;
+  const currentMonthEndDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 0));
+  const currentMonthEnd = toDateOnly(currentMonthEndDate);
   const endingSoonLimit = new Date(today);
   endingSoonLimit.setDate(today.getDate() + 3);
   const endingSoonDate = toDateOnly(endingSoonLimit);
@@ -44,6 +60,7 @@ export async function getDashboardData() {
     { data: recentCustomers },
     { data: recentAccounts },
     { data: subscriptionsData },
+    { data: costsData },
   ] = await Promise.all([
     supabase
       .from("customers")
@@ -80,16 +97,28 @@ export async function getDashboardData() {
         service_account_profiles(profile_name,profile_pin)
       `)
       .neq("status", "archived"),
+    supabase
+      .from("service_account_costs")
+      .select("id,service_account_id,cost_date,period_start,period_end,amount,status")
+      .neq("status", "cancelled"),
   ]);
 
   const totalSlots = accountsData?.reduce((acc, curr) => acc + (curr.total_slots || 0), 0) || 0;
   const usedSlots = accountsData?.reduce((acc, curr) => acc + (curr.used_slots || 0), 0) || 0;
   const availableSlots = Math.max(0, totalSlots - usedSlots);
   const subscriptions = (subscriptionsData ?? []) as unknown as DashboardSubscriptionRow[];
+  const costs = (costsData ?? []) as unknown as DashboardServiceAccountCostRow[];
   const countedSubscriptions = subscriptions.filter((subscription) => subscription.status === "booked" || subscription.status === "completed");
+  const currentMonthSubscriptions = countedSubscriptions.filter((subscription) =>
+    overlapsDateRange(subscription.start_date, subscription.end_date, currentMonthStart, currentMonthEnd),
+  );
+  const currentMonthCosts = costs.filter((cost) => cost.status !== "cancelled" && isInDateRange(cost.cost_date, currentMonthStart, currentMonthEnd));
   const activeBookingsCount = subscriptions.filter((subscription) => subscription.status === "booked").length;
   const completedBookingsCount = subscriptions.filter((subscription) => subscription.status === "completed").length;
   const bookingValue = countedSubscriptions.reduce((acc, subscription) => acc + subscription.price_snapshot, 0);
+  const monthlyBookingValue = currentMonthSubscriptions.reduce((acc, subscription) => acc + subscription.price_snapshot, 0);
+  const monthlySpent = currentMonthCosts.reduce((acc, cost) => acc + cost.amount, 0);
+  const monthlyGrossProfit = monthlyBookingValue - monthlySpent;
   const endingSoonBookings = subscriptions
     .filter(
       (subscription) =>
@@ -122,10 +151,17 @@ export async function getDashboardData() {
           activeBookings: 0,
           completedBookings: 0,
           bookingValue: 0,
+          monthlyBookingValue: 0,
+          monthlySpent: 0,
+          monthlyGrossProfit: 0,
         };
 
         existing.totalBookings += 1;
         existing.bookingValue += subscription.price_snapshot;
+
+        if (overlapsDateRange(subscription.start_date, subscription.end_date, currentMonthStart, currentMonthEnd)) {
+          existing.monthlyBookingValue += subscription.price_snapshot;
+        }
 
         if (subscription.status === "booked") {
           existing.activeBookings += 1;
@@ -148,10 +184,20 @@ export async function getDashboardData() {
           activeBookings: number;
           completedBookings: number;
           bookingValue: number;
+          monthlyBookingValue: number;
+          monthlySpent: number;
+          monthlyGrossProfit: number;
         }
       >(),
     ).values(),
   ).sort((a, b) => b.totalBookings - a.totalBookings);
+
+  // Inject monthly costs and compute gross profit per service account
+  for (const accountSummary of bookingByServiceAccount) {
+    const accountCosts = currentMonthCosts.filter((cost) => cost.service_account_id === accountSummary.id);
+    accountSummary.monthlySpent = accountCosts.reduce((acc, cost) => acc + cost.amount, 0);
+    accountSummary.monthlyGrossProfit = accountSummary.monthlyBookingValue - accountSummary.monthlySpent;
+  }
 
   const recentActivity = [
     ...(recentCustomers?.map((c) => ({
@@ -180,6 +226,9 @@ export async function getDashboardData() {
     activeBookingsCount,
     completedBookingsCount,
     bookingValue,
+    monthlyBookingValue,
+    monthlySpent,
+    monthlyGrossProfit,
     endingSoonCount: endingSoonBookings.length,
     endingSoonBookings,
     bookingByServiceAccount,

@@ -16,6 +16,8 @@ export type ServiceAccountProfileStatus =
   | "maintenance"
   | "archived";
 
+export type ServiceAccountCostStatus = "paid" | "planned" | "cancelled";
+
 export type RentalPackageStatus = "active" | "archived";
 
 export type SubscriptionStatus = "booked" | "completed" | "cancelled" | "archived";
@@ -55,6 +57,19 @@ export type ServiceAccountProfile = {
   profile_pin: string | null;
   is_rentable: boolean;
   status: ServiceAccountProfileStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ServiceAccountCost = {
+  id: string;
+  service_account_id: string;
+  cost_date: string;
+  period_start: string;
+  period_end: string;
+  amount: number;
+  status: ServiceAccountCostStatus;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -134,6 +149,21 @@ export type ServiceAccountProfileInsert = {
 
 export type ServiceAccountProfileUpdate = Partial<ServiceAccountProfileInsert>;
 
+export type ServiceAccountCostInsert = {
+  id?: string;
+  service_account_id: string;
+  cost_date: string;
+  period_start: string;
+  period_end: string;
+  amount: number;
+  status?: ServiceAccountCostStatus;
+  notes?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type ServiceAccountCostUpdate = Partial<ServiceAccountCostInsert>;
+
 export type RentalPackageInsert = {
   id?: string;
   name: string;
@@ -185,6 +215,12 @@ export type Database = {
         Row: ServiceAccountProfile;
         Insert: ServiceAccountProfileInsert;
         Update: ServiceAccountProfileUpdate;
+        Relationships: [];
+      };
+      service_account_costs: {
+        Row: ServiceAccountCost;
+        Insert: ServiceAccountCostInsert;
+        Update: ServiceAccountCostUpdate;
         Relationships: [];
       };
       rental_packages: {

@@ -56,7 +56,11 @@ export function BookingFormDialog({ booking, options }: BookingFormDialogProps) 
     () => options.rentalPackages.find((rentalPackage) => rentalPackage.id === selectedPackageId),
     [options.rentalPackages, selectedPackageId],
   );
-  const availableProfiles = options.profiles.filter((profile) => profile.service_account_id === selectedAccountId);
+  const availableProfiles = options.profiles.filter(
+    (profile) =>
+      profile.service_account_id === selectedAccountId &&
+      (profile.status === "available" || profile.id === booking?.service_account_profile_id),
+  );
   const endDate = addDays(startDate, selectedPackage?.duration_days ?? 0);
 
   async function submitAction(formData: FormData) {

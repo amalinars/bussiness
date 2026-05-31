@@ -21,7 +21,7 @@ Planned features:
 - Quick links to major modules
 
 Current status:
-Active MVP module. Fully database-backed. Renders real-time aggregate statistics for active customer count, total active service accounts, free slot counts, and service accounts requiring attention. Also shows booking metrics from `riztama_business.subscriptions`, including active bookings, completed bookings, booking value from `price_snapshot`, rows ending soon, and per-service-account booking summaries. Includes a unified recent activity feed for newly added customers and accounts.
+Active MVP module. Fully database-backed. Renders real-time aggregate statistics for active customer count, total active service accounts, free slot counts, and service accounts requiring attention. Also shows booking metrics from `riztama_business.subscriptions`, including active bookings, completed bookings, booking value from `price_snapshot`, rows ending soon, and per-service-account booking summaries. Includes monthly spent and monthly gross profit indicators using `riztama_business.service_account_costs` to track service account operational expenses. Includes a unified recent activity feed for newly added customers and accounts.
 
 Future improvements:
 Analytics, date filters, trends, revenue summaries, and alert prioritization.
@@ -108,7 +108,7 @@ Planned features:
 - Filtering by status and platform
 
 Current status:
-Active MVP module exposed as the Bookings sidebar page. The page reads `riztama_business.subscriptions` with related customers, service accounts, service account profiles, and rental package snapshots through `lib/subscriptions.ts`. Booking create/edit/archive actions use neobrutalist dialogs, URL-backed search/status/service-account filters, package-driven price/end-date defaults, and inline customer creation for new booking flows.
+Active MVP module exposed as the Bookings sidebar page. The page reads `riztama_business.subscriptions` with related customers, service accounts, service account profiles, and rental package snapshots through `lib/subscriptions.ts`. Booking create/edit/archive actions use neobrutalist dialogs, URL-backed search/status/service-account filters, package-driven price/end-date defaults, and inline customer creation for new booking flows. Booking status changes now sync profile availability automatically: `booked` marks the assigned profile `occupied`, while `completed`, `cancelled`, or `archived` returns the profile to `available` when no active booking remains.
 
 Future improvements:
 Recurring renewal workflows, advanced reminders, subscription history, and automated status updates.

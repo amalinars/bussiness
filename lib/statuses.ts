@@ -1,6 +1,7 @@
 import type {
   CustomerStatus,
   RentalPackageStatus,
+  ServiceAccountCostStatus,
   ServiceAccountProfileStatus,
   ServiceAccountStatus,
   SubscriptionStatus,
@@ -23,6 +24,8 @@ export const SERVICE_ACCOUNT_PROFILE_STATUSES = [
   "maintenance",
   "archived",
 ] as const satisfies readonly ServiceAccountProfileStatus[];
+
+export const SERVICE_ACCOUNT_COST_STATUSES = ["paid", "planned", "cancelled"] as const satisfies readonly ServiceAccountCostStatus[];
 
 export const RENTAL_PACKAGE_STATUSES = ["active", "archived"] as const satisfies readonly RentalPackageStatus[];
 
