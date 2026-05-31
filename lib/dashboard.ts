@@ -11,6 +11,7 @@ type DashboardSubscriptionRow = Pick<
   | "price_snapshot"
   | "start_date"
   | "end_date"
+  | "end_time"
   | "status"
 > & {
   customers: { name: string } | null;
@@ -91,7 +92,7 @@ export async function getDashboardData() {
     supabase
       .from("subscriptions")
       .select(`
-        id,service_account_id,service_account_profile_id,package_name_snapshot,duration_days_snapshot,price_snapshot,start_date,end_date,status,
+        id,service_account_id,service_account_profile_id,package_name_snapshot,duration_days_snapshot,price_snapshot,start_date,end_date,end_time,status,
         customers(name),
         service_accounts(id,label,service_name),
         service_account_profiles(profile_name,profile_pin)
@@ -136,6 +137,8 @@ export async function getDashboardData() {
       profilePin: subscription.service_account_profiles?.profile_pin,
       packageName: subscription.package_name_snapshot,
       endDate: subscription.end_date,
+      endTime: subscription.end_time,
+      status: subscription.status,
       endDateLabel: formatDateOnly(subscription.end_date),
     }));
 

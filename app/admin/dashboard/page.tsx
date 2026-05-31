@@ -6,6 +6,7 @@ import { PageContainer } from "@/components/PageContainer";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDashboardData } from "@/lib/dashboard";
+import { Countdown } from "@/components/Countdown";
 
 export const revalidate = 0;
 
@@ -162,7 +163,10 @@ export default async function DashboardPage() {
                           {booking.profilePin ? ` — PIN ${booking.profilePin}` : ""}
                         </p>
                       </div>
-                      <StatusBadge tone="warning">{booking.endDateLabel}</StatusBadge>
+                      <div className="flex flex-wrap gap-2 items-center">
+                        <Countdown endDate={booking.endDate} endTime={booking.endTime} status={booking.status} />
+                        <StatusBadge tone="warning">{booking.endDateLabel}</StatusBadge>
+                      </div>
                     </div>
                     <p className="text-sm font-base">{booking.packageName} ends on {booking.endDate}</p>
                   </div>

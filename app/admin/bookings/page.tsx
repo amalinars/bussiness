@@ -5,6 +5,7 @@ import { PageContainer } from "@/components/PageContainer";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSubscriptionFormOptions, getSubscriptions } from "@/lib/subscriptions";
+import { Countdown } from "@/components/Countdown";
 
 import { BookingActions } from "./BookingActions";
 import { BookingFilters } from "./BookingFilters";
@@ -112,10 +113,11 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
                       <div className="rounded-base border border-border bg-secondary-background p-2">
                         <p className="text-xs text-muted-foreground">Dates</p>
                         <p>{booking.start_date}</p>
-                        <p className="text-xs">
+                        <p className="text-xs mb-1">
                           to {booking.end_date}
                           {booking.end_time ? ` at ${booking.end_time.slice(0, 5)}` : ""}
                         </p>
+                        <Countdown endDate={booking.end_date} endTime={booking.end_time} status={booking.status} />
                       </div>
                     </div>
                     <div className="flex flex-wrap items-center justify-between gap-2 rounded-base border border-border bg-secondary-background p-2">
@@ -167,10 +169,11 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
                       </td>
                       <td className="px-4 py-3 align-top">
                         <div>{booking.start_date}</div>
-                        <div className="text-xs">
+                        <div className="text-xs mb-1">
                           to {booking.end_date}
                           {booking.end_time ? ` at ${booking.end_time.slice(0, 5)}` : ""}
                         </div>
+                        <Countdown endDate={booking.end_date} endTime={booking.end_time} status={booking.status} />
                       </td>
                       <td className="px-4 py-3 align-top">Rp {booking.price_snapshot.toLocaleString("id-ID")}</td>
                       <td className="px-4 py-3 align-top">

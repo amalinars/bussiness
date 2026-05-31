@@ -33,6 +33,18 @@ Already updated via migration `supabase/migrations/20260531050000_add_subscripti
 - Updated `app/admin/bookings/page.tsx`:
   - Show end time alongside end date in both mobile cards and desktop table views: `to {booking.end_date} at {booking.end_time}` format (slicing the time to HH:MM).
 
+### Booking List & Dashboard Expiration Countdowns
+
+- Created a reusable client component `components/Countdown.tsx` which handles real-time remaining duration updates every second:
+  - Formats remaining time as `Xd Yh left`, `Xh Ym left`, or `Xm Xs left` dynamically.
+  - Automatically handles target parsing across different browsers.
+  - Displays a neobrutalist badge with a warning bg when expired or a warm pink bg when active.
+  - Returns `null` if the booking status is not `booked` (completed/cancelled/archived bookings do not display active countdowns).
+- Updated `lib/dashboard.ts` to include the `end_time` database field inside dashboard metrics calls, exposing `endTime` and `status` in the `endingSoonBookings` list.
+- Embedded `<Countdown />` directly into:
+  - `app/admin/bookings/page.tsx` date section (for both desktop tables and mobile cards).
+  - `app/admin/dashboard/page.tsx` "Ending Soon" item card.
+
 ## Verification
 
 Run type check and linters:
