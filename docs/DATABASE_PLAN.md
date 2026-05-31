@@ -236,6 +236,7 @@ Created:
 - RLS enabled on the two initial tables.
 - Temporary read-only `SELECT` policies for the two initial tables.
 - Temporary customer `INSERT` and `UPDATE` policies for Customer CRUD.
+- Temporary service account `INSERT` and `UPDATE` policies for Service Account CRUD.
 - TypeScript database row, insert, and update types.
 - Status constants.
 - Manual seed SQL for safe local/VPS Supabase testing in `supabase/seed.sql`.
@@ -244,8 +245,8 @@ Not created:
 
 - Supabase project link.
 - Applied remote database migration.
-- Service Account CRUD pages or forms.
-- Customer detail pages, search, and filters.
+- Customer and Service Account detail pages.
+- Service Account search and filters.
 - Authentication.
 - Authenticated role-based RLS policies.
 - Tables for Platforms, Subscriptions, Payments, Reminders, Settings, or slot assignment.
@@ -258,6 +259,7 @@ Not created:
 - 2026-05-29: Temporary read-only `SELECT` policies were added for `customers` and `service_accounts` so the anon-key Supabase client can read list pages before authentication exists. Replace or restrict these policies when authentication or server-only database access is introduced.
 - 2026-05-29: Manual seed SQL was added in `supabase/seed.sql` for safe local/VPS Supabase testing. It uses fixed UUIDs and `on conflict (id) do nothing` so rerunning it does not duplicate rows.
 - 2026-05-29: Customer CRUD was added with create/edit dialog actions and archive-only delete behavior. Temporary customer `INSERT` and `UPDATE` policies exist only for the current unauthenticated dev setup. See `docs/development-log/2026-05-29-customer-crud.md`.
+- 2026-05-30: Service Account CRUD was added with create/edit dialog actions, archive-only delete behavior, and slot validation. Temporary service account `INSERT` and `UPDATE` policies exist only for the current unauthenticated dev setup. See `docs/development-log/2026-05-30-service-account-crud.md`.
 
 ## Open Questions
 

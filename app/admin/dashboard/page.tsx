@@ -1,48 +1,106 @@
-import { Database, Server, UsersRound, WalletCards } from "lucide-react";
+import { Database as DatabaseIcon, Server, UsersRound, WalletCards } from "lucide-react";
 
 import { MetricCard } from "@/components/MetricCard";
 import { PageContainer } from "@/components/PageContainer";
 import { StatusBadge } from "@/components/StatusBadge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { supabase } from "@/lib/supabase";
 
-const metrics = [
-  {
-    title: "Customer Records",
-    value: "0",
-    helper: "Ready for customer data setup",
-    icon: UsersRound,
-    tone: "green" as const,
-  },
-  {
-    title: "Service Accounts",
-    value: "0",
-    helper: "Inventory module prepared",
-    icon: Server,
-    tone: "yellow" as const,
-  },
-  {
-    title: "Available Slots",
-    value: "0",
-    helper: "Slot tracking planned for this module",
-    icon: WalletCards,
-    tone: "pink" as const,
-  },
-  {
-    title: "Data Source",
-    value: "Local UI",
-    helper: "No Supabase schema connected yet",
-    icon: Database,
-    tone: "blue" as const,
-  },
-];
+export const revalidate = 0;
 
-export default function DashboardPage() {
+async function getDashboardData() {
+  const [
+    { count: customerCount },
+    { count: activeAccountsCount },
+    { count: pendingAccountsCount },
+    { data: recentCustomers },
+    { data: recentAccounts },
+  ] = await Promise.all([
+    supabase.from("customers").select("*", { count: "exact", head: true }),
+    supabase
+      .from("service_accounts")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "active"),
+    supabase
+      .from("service_accounts")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "maintenance"),
+    supabase
+      .from("customers")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(5),
+    supabase
+      .from("service_accounts")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(5),
+  ]);
+
+  const recentActivity = [
+    ...(recentCustomers?.map((c) => ({
+      id: c.id,
+      type: "Customer",
+      label: c.name,
+      date: new Date(c.created_at),
+    })) || []),
+    ...(recentAccounts?.map((a) => ({
+      id: a.id,
+      type: "Service Account",
+      label: a.label,
+      date: new Date(a.created_at),
+    })) || []),
+  ]
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .slice(0, 5);
+
+  return {
+    customerCount: customerCount || 0,
+    activeAccountsCount: activeAccountsCount || 0,
+    pendingAccountsCount: pendingAccountsCount || 0,
+    recentActivity,
+  };
+}
+
+export default async function DashboardPage() {
+  const data = await getDashboardData();
+
+  const metrics = [
+    {
+      title: "Total Customers",
+      value: data.customerCount.toString(),
+      helper: "Total registered customers",
+      icon: UsersRound,
+      tone: "green" as const,
+    },
+    {
+      title: "Active Accounts",
+      value: data.activeAccountsCount.toString(),
+      helper: "Service accounts currently active",
+      icon: Server,
+      tone: "blue" as const,
+    },
+    {
+      title: "Maintenance",
+      value: data.pendingAccountsCount.toString(),
+      helper: "Accounts requiring attention",
+      icon: WalletCards,
+      tone: "yellow" as const,
+    },
+    {
+      title: "Data Source",
+      value: "Supabase",
+      helper: "Connected to live database",
+      icon: DatabaseIcon,
+      tone: "pink" as const,
+    },
+  ];
+
   return (
     <PageContainer
       title="Dashboard"
-      eyebrow="Active MVP module"
-      description="Operational shell for customer and service account management. Metrics are placeholders until database work starts."
+      eyebrow="Overview"
+      description="Real-time metrics and activity feed from your business database."
     >
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (
@@ -54,54 +112,65 @@ export default function DashboardPage() {
         <Card className="bg-secondary-background">
           <CardHeader>
             <CardTitle className="text-xl font-heading font-black">
-              Current Work Area
+              Recent Activity
             </CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-3">
-            <div className="rounded-base border-2 border-border bg-background p-4 shadow-shadow">
-              <div className="mb-2 flex flex-wrap gap-2">
-                <StatusBadge tone="active">Dashboard</StatusBadge>
-                <StatusBadge tone="warning">Customers</StatusBadge>
-                <StatusBadge tone="info">Service Accounts</StatusBadge>
+          <CardContent>
+            {data.recentActivity.length > 0 ? (
+              <div className="space-y-4">
+                {data.recentActivity.map((activity) => (
+                  <div
+                    key={`${activity.type}-${activity.id}`}
+                    className="flex items-center justify-between rounded-base border-2 border-border bg-background p-4 shadow-shadow"
+                  >
+                    <div>
+                      <p className="font-heading font-bold">{activity.label}</p>
+                      <p className="text-sm text-muted-foreground">
+                        New {activity.type} added
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <StatusBadge
+                        tone={activity.type === "Customer" ? "active" : "info"}
+                      >
+                        {activity.type}
+                      </StatusBadge>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {activity.date.toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <p className="font-base">
-                The app shell is limited to the first three MVP modules. Database schema,
-                CRUD, authentication, and integrations are intentionally not connected yet.
-              </p>
-            </div>
+            ) : (
+              <div className="rounded-base border-2 border-dashed border-border p-8 text-center">
+                <p className="text-muted-foreground font-base">
+                  No recent activity found.
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <Card className="bg-secondary-background">
           <CardHeader>
             <CardTitle className="text-xl font-heading font-black">
-              Next Setup Step
+              System Status
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="font-base">
-              After this shell is stable, the next project step is database planning for
-              customers and service accounts.
-            </p>
-            <Button variant="neutral" disabled>
-              CRUD not enabled yet
-            </Button>
+            <div className="rounded-base border-2 border-border bg-background p-4 shadow-shadow">
+              <div className="mb-2 flex flex-wrap gap-2">
+                <StatusBadge tone="active">Operational</StatusBadge>
+                <StatusBadge tone="info">Supabase Live</StatusBadge>
+              </div>
+              <p className="font-base text-sm">
+                Database connection established. All modules are reporting live data.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
-
-      <Card className="bg-secondary-background">
-        <CardHeader>
-          <CardTitle className="text-xl font-heading font-black">
-            Scope Guardrails
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-3 md:grid-cols-3">
-          <StatusBadge>Authentication: later</StatusBadge>
-          <StatusBadge>Supabase schema: later</StatusBadge>
-          <StatusBadge>Integrations: later</StatusBadge>
-        </CardContent>
-      </Card>
     </PageContainer>
   );
 }

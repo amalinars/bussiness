@@ -27,6 +27,8 @@
 * Customer create, edit, and archive-only actions using neobrutalist dialog UI.
 * Temporary Customer `INSERT` and `UPDATE` RLS policies for the current unauthenticated dev setup.
 * Customer search and status filtering on the admin Customers list.
+* Service Account create, edit, and archive-only actions using neobrutalist dialog UI.
+* Temporary Service Account `INSERT` and `UPDATE` RLS policies for the current unauthenticated dev setup.
 
 ### Changed
 

@@ -6,6 +6,9 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getServiceAccounts } from "@/lib/service-accounts";
 
+import { ServiceAccountActions } from "./ServiceAccountActions";
+import { ServiceAccountFormDialog } from "./ServiceAccountFormDialog";
+
 const serviceAccountStatusTone = {
   active: "active",
   full: "warning",
@@ -28,15 +31,21 @@ export default async function ServiceAccountsPage() {
       {error ? (
         <EmptyState title="Service account data unavailable" description={error} />
       ) : serviceAccounts.length === 0 ? (
-        <EmptyState
-          title="No service accounts yet"
-          description="The service_accounts table is connected, but no account records are available yet. CRUD is intentionally not implemented in this phase."
-        />
+        <div className="space-y-4">
+          <ServiceAccountFormDialog />
+          <EmptyState
+            title="No service accounts yet"
+            description="The service_accounts table is connected. Add the first service account to start managing slot capacity."
+          />
+        </div>
       ) : (
         <Card>
-          <CardHeader>
-            <CardTitle>Service account list</CardTitle>
-            <CardDescription>{serviceAccounts.length} service account records loaded from Supabase.</CardDescription>
+          <CardHeader className="gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+            <div>
+              <CardTitle>Service account list</CardTitle>
+              <CardDescription>{serviceAccounts.length} service account records loaded from Supabase.</CardDescription>
+            </div>
+            <ServiceAccountFormDialog />
           </CardHeader>
           <CardContent>
             <div className="overflow-hidden rounded-base border-2 border-border">
@@ -49,6 +58,7 @@ export default async function ServiceAccountsPage() {
                     <th className="px-4 py-3 font-heading">Renewal</th>
                     <th className="px-4 py-3 font-heading">Status</th>
                     <th className="px-4 py-3 font-heading">Credential Ref</th>
+                    <th className="px-4 py-3 font-heading">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -73,6 +83,9 @@ export default async function ServiceAccountsPage() {
                           <StatusBadge tone={serviceAccountStatusTone[account.status]}>{account.status}</StatusBadge>
                         </td>
                         <td className="px-4 py-3">{account.credential_reference ?? "-"}</td>
+                        <td className="px-4 py-3">
+                          <ServiceAccountActions account={account} />
+                        </td>
                       </tr>
                     );
                   })}
