@@ -21,7 +21,7 @@ Planned features:
 - Quick links to major modules
 
 Current status:
-Active MVP module. Fully database-backed. Renders real-time aggregate statistics for active customer count, total active service accounts, free slot counts, and service accounts requiring attention. Includes a unified recent activity feed for newly added customers and accounts.
+Active MVP module. Fully database-backed. Renders real-time aggregate statistics for active customer count, total active service accounts, free slot counts, and service accounts requiring attention. Also shows booking metrics from `riztama_business.subscriptions`, including active bookings, completed bookings, booking value from `price_snapshot`, rows ending soon, and per-service-account booking summaries. Includes a unified recent activity feed for newly added customers and accounts.
 
 Future improvements:
 Analytics, date filters, trends, revenue summaries, and alert prioritization.

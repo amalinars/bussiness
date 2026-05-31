@@ -1,5 +1,5 @@
 import { connection } from "next/server";
-import { Server, UsersRound, WalletCards, LayoutGrid } from "lucide-react";
+import { CalendarClock, CheckCircle2, LayoutGrid, Server, UsersRound, WalletCards } from "lucide-react";
 
 import { MetricCard } from "@/components/MetricCard";
 import { PageContainer } from "@/components/PageContainer";
@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   await connection();
   const data = await getDashboardData();
 
-  const metrics = [
+  const businessMetrics = [
     {
       title: "Total Customers",
       value: data.customerCount.toString(),
@@ -44,6 +44,37 @@ export default async function DashboardPage() {
     },
   ];
 
+  const bookingMetrics = [
+    {
+      title: "Active Bookings",
+      value: data.activeBookingsCount.toString(),
+      helper: "Currently booked rental rows",
+      icon: CalendarClock,
+      tone: "blue" as const,
+    },
+    {
+      title: "Completed Bookings",
+      value: data.completedBookingsCount.toString(),
+      helper: "Finished rentals from bookings",
+      icon: CheckCircle2,
+      tone: "green" as const,
+    },
+    {
+      title: "Booking Value",
+      value: `Rp ${data.bookingValue.toLocaleString("id-ID")}`,
+      helper: "From booking price snapshots, not payment table",
+      icon: WalletCards,
+      tone: "pink" as const,
+    },
+    {
+      title: "Ending Soon",
+      value: data.endingSoonCount.toString(),
+      helper: "Booked rows ending within 3 days",
+      icon: CalendarClock,
+      tone: "yellow" as const,
+    },
+  ];
+
   return (
     <PageContainer
       title="Dashboard"
@@ -51,9 +82,84 @@ export default async function DashboardPage() {
       description="Real-time metrics and activity feed from your business database."
     >
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {metrics.map((metric) => (
+        {businessMetrics.map((metric) => (
           <MetricCard key={metric.title} {...metric} />
         ))}
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {bookingMetrics.map((metric) => (
+          <MetricCard key={metric.title} {...metric} />
+        ))}
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+        <Card className="bg-secondary-background">
+          <CardHeader>
+            <CardTitle className="text-xl font-heading font-black">
+              Bookings by Service Account
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data.bookingByServiceAccount.length > 0 ? (
+              <div className="space-y-4">
+                {data.bookingByServiceAccount.map((account) => (
+                  <div key={account.id} className="rounded-base border-2 border-border bg-background p-4 shadow-shadow">
+                    <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="font-heading font-bold">{account.label}</p>
+                        <p className="text-sm text-muted-foreground">{account.serviceName}</p>
+                      </div>
+                      <p className="font-heading font-bold">Rp {account.bookingValue.toLocaleString("id-ID")}</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <StatusBadge tone="info">{account.totalBookings} total</StatusBadge>
+                      <StatusBadge tone="active">{account.activeBookings} active</StatusBadge>
+                      <StatusBadge tone="neutral">{account.completedBookings} completed</StatusBadge>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-base border-2 border-dashed border-border p-8 text-center">
+                <p className="text-muted-foreground font-base">No booking summary found.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="bg-secondary-background">
+          <CardHeader>
+            <CardTitle className="text-xl font-heading font-black">
+              Ending Soon
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data.endingSoonBookings.length > 0 ? (
+              <div className="space-y-4">
+                {data.endingSoonBookings.map((booking) => (
+                  <div key={booking.id} className="rounded-base border-2 border-border bg-background p-4 shadow-shadow">
+                    <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="font-heading font-bold">{booking.customerName}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {booking.accountLabel} — {booking.profileName}
+                          {booking.profilePin ? ` — PIN ${booking.profilePin}` : ""}
+                        </p>
+                      </div>
+                      <StatusBadge tone="warning">{booking.endDateLabel}</StatusBadge>
+                    </div>
+                    <p className="text-sm font-base">{booking.packageName} ends on {booking.endDate}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-base border-2 border-dashed border-border p-8 text-center">
+                <p className="text-muted-foreground font-base">No active bookings ending in the next 3 days.</p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
@@ -122,4 +228,3 @@ export default async function DashboardPage() {
     </PageContainer>
   );
 }
-

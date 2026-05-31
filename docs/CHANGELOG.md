@@ -41,6 +41,7 @@
 * Dedicated Bookings admin page with URL-backed filters, create/edit/archive actions, package auto price/end date, and inline customer creation.
 * Bookings sidebar navigation item.
 * Spreadsheet buyer and booking rows in `supabase/seed.sql` for Risma, Jovan, and Tugeder tabs.
+* Dashboard booking metrics for active bookings, completed bookings, booking value, ending-soon rows, and per-service-account summaries.
 
 
 
