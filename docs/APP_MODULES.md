@@ -2,7 +2,7 @@
 
 Each module should visually follow the same neobrutalist dashboard style: thick borders, hard offset shadows, flat colors, chunky controls, and clear hierarchy.
 
-Current active MVP modules are Dashboard, Customers, and Service Accounts. Initial database scope is intentionally limited to `riztama_business.customers` and `riztama_business.service_accounts`. Customers and Service Accounts now have read-only Supabase-backed list pages. Other modules remain planned for later and should not be implemented until explicitly requested.
+Current active MVP modules are Dashboard, Customers, and Service Accounts. Initial database scope is intentionally limited to `riztama_business.customers` and `riztama_business.service_accounts`. Customers and Service Accounts now have CRUD and search/filter list pages. Other modules remain planned for later and should not be implemented until explicitly requested.
 
 ## Dashboard
 
@@ -21,7 +21,7 @@ Planned features:
 - Quick links to major modules
 
 Current status:
-Active MVP module. App shell page implemented with placeholder metrics only.
+Active MVP module. Fully database-backed. Renders real-time aggregate statistics for active customer count, total active service accounts, free slot counts, and service accounts requiring attention. Includes a unified recent activity feed for newly added customers and accounts.
 
 Future improvements:
 Analytics, date filters, trends, revenue summaries, and alert prioritization.

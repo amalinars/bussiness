@@ -1,98 +1,46 @@
-import { Database as DatabaseIcon, Server, UsersRound, WalletCards } from "lucide-react";
+import { connection } from "next/server";
+import { Server, UsersRound, WalletCards, LayoutGrid } from "lucide-react";
 
 import { MetricCard } from "@/components/MetricCard";
 import { PageContainer } from "@/components/PageContainer";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { supabase } from "@/lib/supabase";
+import { getDashboardData } from "@/lib/dashboard";
 
 export const revalidate = 0;
 
-async function getDashboardData() {
-  const [
-    { count: customerCount },
-    { count: activeAccountsCount },
-    { count: pendingAccountsCount },
-    { data: recentCustomers },
-    { data: recentAccounts },
-  ] = await Promise.all([
-    supabase.from("customers").select("*", { count: "exact", head: true }),
-    supabase
-      .from("service_accounts")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "active"),
-    supabase
-      .from("service_accounts")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "maintenance"),
-    supabase
-      .from("customers")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(5),
-    supabase
-      .from("service_accounts")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(5),
-  ]);
-
-  const recentActivity = [
-    ...(recentCustomers?.map((c) => ({
-      id: c.id,
-      type: "Customer",
-      label: c.name,
-      date: new Date(c.created_at),
-    })) || []),
-    ...(recentAccounts?.map((a) => ({
-      id: a.id,
-      type: "Service Account",
-      label: a.label,
-      date: new Date(a.created_at),
-    })) || []),
-  ]
-    .sort((a, b) => b.date.getTime() - a.date.getTime())
-    .slice(0, 5);
-
-  return {
-    customerCount: customerCount || 0,
-    activeAccountsCount: activeAccountsCount || 0,
-    pendingAccountsCount: pendingAccountsCount || 0,
-    recentActivity,
-  };
-}
-
 export default async function DashboardPage() {
+  await connection();
   const data = await getDashboardData();
 
   const metrics = [
     {
       title: "Total Customers",
       value: data.customerCount.toString(),
-      helper: "Total registered customers",
+      helper: "Active & inactive customers",
       icon: UsersRound,
       tone: "green" as const,
     },
     {
       title: "Active Accounts",
       value: data.activeAccountsCount.toString(),
-      helper: "Service accounts currently active",
+      helper: "Service accounts active or full",
       icon: Server,
       tone: "blue" as const,
     },
     {
-      title: "Maintenance",
-      value: data.pendingAccountsCount.toString(),
-      helper: "Accounts requiring attention",
-      icon: WalletCards,
-      tone: "yellow" as const,
+      title: "Available Slots",
+      value: data.availableSlots.toString(),
+      helper: "Unused/free customer slots",
+      icon: LayoutGrid,
+      tone: "pink" as const,
     },
     {
-      title: "Data Source",
-      value: "Supabase",
-      helper: "Connected to live database",
-      icon: DatabaseIcon,
-      tone: "pink" as const,
+      title: "Attention Required",
+      value: data.maintenanceAccountsCount.toString(),
+      helper: "Accounts in maintenance/inactive",
+      icon: WalletCards,
+      tone: "yellow" as const,
     },
   ];
 
@@ -126,7 +74,7 @@ export default async function DashboardPage() {
                     <div>
                       <p className="font-heading font-bold">{activity.label}</p>
                       <p className="text-sm text-muted-foreground">
-                        New {activity.type} added
+                        New {activity.type} added ({activity.status})
                       </p>
                     </div>
                     <div className="text-right">
@@ -174,3 +122,4 @@ export default async function DashboardPage() {
     </PageContainer>
   );
 }
+

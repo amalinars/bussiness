@@ -30,6 +30,7 @@
 * Service Account create, edit, and archive-only actions using neobrutalist dialog UI.
 * Temporary Service Account `INSERT` and `UPDATE` RLS policies for the current unauthenticated dev setup.
 * Service Account search and status filtering on the admin Service Accounts list.
+* Real-time database-backed dashboard metrics (customers, active service accounts, available slots, attention flags) and unified recent activity timeline.
 
 
 ### Changed
