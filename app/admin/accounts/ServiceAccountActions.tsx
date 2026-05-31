@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import type { ServiceAccount } from "@/types/database";
 
@@ -13,6 +15,9 @@ type ServiceAccountActionsProps = {
 export function ServiceAccountActions({ account }: ServiceAccountActionsProps) {
   return (
     <div className="flex flex-wrap gap-2">
+      <Button asChild size="sm" variant="neutral">
+        <Link href={`/admin/accounts/${account.id}`}>Profiles</Link>
+      </Button>
       <ServiceAccountFormDialog account={account} />
       <form
         action={archiveServiceAccountAction}

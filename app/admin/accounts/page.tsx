@@ -93,6 +93,7 @@ export default async function ServiceAccountsPage({ searchParams }: ServiceAccou
                         <td className="px-4 py-3">
                           <div className="font-heading">{account.label}</div>
                           <div className="text-xs">{account.account_identifier ?? "No identifier"}</div>
+                          <div className="text-xs">Password: {account.account_password ?? "-"}</div>
                         </td>
                         <td className="px-4 py-3">{account.service_name}</td>
                         <td className="px-4 py-3">

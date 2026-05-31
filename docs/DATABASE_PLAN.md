@@ -123,7 +123,8 @@ Planned fields:
 | `label` | `text` | Required internal account label. |
 | `service_name` | `text` | Required service/platform name as plain text for the first MVP. |
 | `account_identifier` | `text` | Optional email, username, or account reference. |
-| `credential_reference` | `text` | Optional reference to where credentials are stored safely. Do not store passwords here. |
+| `account_password` | `text` | Optional account password. Explicitly allowed for this private internal app per user request; revisit when authentication/encryption is added. |
+| `credential_reference` | `text` | Optional credential note or reference. |
 | `total_slots` | `integer` | Required total slot capacity. |
 | `used_slots` | `integer` | Required used slot count. |
 | `status` | `text` | Uses service account status constants. |
@@ -150,7 +151,6 @@ Initial UI usage:
 
 Not included yet:
 
-- Password storage
 - Credential encryption implementation
 - Slot assignment table
 - Subscription relation
@@ -192,7 +192,7 @@ Service Accounts:
 - `used_slots` must be greater than or equal to `0`.
 - `used_slots` must not exceed `total_slots`.
 - `status` must use a known service account status.
-- Passwords must not be stored in plain text.
+- `account_password` may be stored and displayed for the current private internal workflow per explicit user request; revisit before public/authenticated production use.
 
 ## Future Database Scope
 
@@ -237,6 +237,9 @@ Created:
 - Temporary read-only `SELECT` policies for the two initial tables.
 - Temporary customer `INSERT` and `UPDATE` policies for Customer CRUD.
 - Temporary service account `INSERT` and `UPDATE` policies for Service Account CRUD.
+- Service account profile table for per-account profile/PIN/rentable status tracking.
+- Temporary service account profile `SELECT`, `INSERT`, and `UPDATE` policies for Profile CRUD.
+- Service account `account_password` column for the current private internal spreadsheet migration workflow.
 - TypeScript database row, insert, and update types.
 - Status constants.
 - Manual seed SQL for safe local/VPS Supabase testing in `supabase/seed.sql`.
@@ -245,8 +248,8 @@ Not created:
 
 - Supabase project link.
 - Applied remote database migration.
-- Customer and Service Account detail pages.
-- Service Account search and filters.
+- Customer detail pages.
+- Customer assignment/subscriptions to service account profiles.
 - Authentication.
 - Authenticated role-based RLS policies.
 - Tables for Platforms, Subscriptions, Payments, Reminders, Settings, or slot assignment.
@@ -260,6 +263,8 @@ Not created:
 - 2026-05-29: Manual seed SQL was added in `supabase/seed.sql` for safe local/VPS Supabase testing. It uses fixed UUIDs and `on conflict (id) do nothing` so rerunning it does not duplicate rows.
 - 2026-05-29: Customer CRUD was added with create/edit dialog actions and archive-only delete behavior. Temporary customer `INSERT` and `UPDATE` policies exist only for the current unauthenticated dev setup. See `docs/development-log/2026-05-29-customer-crud.md`.
 - 2026-05-30: Service Account CRUD was added with create/edit dialog actions, archive-only delete behavior, and slot validation. Temporary service account `INSERT` and `UPDATE` policies exist only for the current unauthenticated dev setup. See `docs/development-log/2026-05-30-service-account-crud.md`.
+- 2026-05-30: Service account profiles were added for Netflix-style profile/PIN management. A service account can have up to 5 active profiles and up to 4 rentable active profiles. See `docs/development-log/2026-05-30-service-account-profiles.md`.
+- 2026-05-31: `account_password` was added to service accounts for the user's private internal spreadsheet migration workflow. See `docs/development-log/2026-05-31-service-account-password-seed.md`.
 
 ## Open Questions
 

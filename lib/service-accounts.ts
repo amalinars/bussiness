@@ -16,6 +16,7 @@ export type ServiceAccountFormInput = {
   label: string;
   service_name: string;
   account_identifier?: string | null;
+  account_password?: string | null;
   credential_reference?: string | null;
   total_slots?: string | number | null;
   used_slots?: string | number | null;
@@ -96,6 +97,7 @@ function normalizeServiceAccountInput(input: ServiceAccountFormInput): ServiceAc
     label,
     service_name: serviceName,
     account_identifier: emptyToNull(input.account_identifier),
+    account_password: emptyToNull(input.account_password),
     credential_reference: emptyToNull(input.credential_reference),
     total_slots: totalSlots,
     used_slots: usedSlots,
@@ -116,7 +118,7 @@ function toMutationError(action: string, error: unknown): ServiceAccountMutation
 
 export async function getServiceAccounts(filters: ServiceAccountFilters = {}): Promise<ServiceAccountsResult> {
   let query = supabase.from("service_accounts").select(
-    "id,label,service_name,account_identifier,credential_reference,total_slots,used_slots,status,renewal_date,notes,created_at,updated_at",
+    "id,label,service_name,account_identifier,account_password,credential_reference,total_slots,used_slots,status,renewal_date,notes,created_at,updated_at",
   );
 
   if (filters.status && filters.status !== "all") {

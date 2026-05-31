@@ -33,6 +33,9 @@
 * Real-time database-backed dashboard metrics (customers, active service accounts, available slots, attention flags) and unified recent activity timeline.
 * Collapsible mobile vertical sidebar navigation layout trigger.
 * Responsive viewport scrollable wrappers surrounding datatable nodes.
+* Service account profile management with visible PIN, rentable toggle, max 5 active profiles, and max 4 rentable active profiles.
+* Temporary Service Account Profile `SELECT`, `INSERT`, and `UPDATE` RLS policies for the current unauthenticated dev setup.
+* Service account password field for the current private internal spreadsheet workflow.
 
 
 
@@ -50,6 +53,7 @@
 * Updated database typing from the default public schema to the dedicated `riztama_business` schema.
 * Marked Customers and Service Accounts pages as request-time rendered so Supabase reads are not executed during static prerendering.
 * Updated global typography from Geist to Nunito body text and Fredoka headings for a friendlier dashboard feel.
+* Updated manual seed data to use real Netflix service accounts, account passwords, and profile rows from the spreadsheet screenshots, without importing buyer/subscription rows yet.
 
 ### Removed
 

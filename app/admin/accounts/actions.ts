@@ -25,6 +25,7 @@ function serviceAccountInputFromFormData(formData: FormData) {
     label: formValue(formData, "label"),
     service_name: formValue(formData, "service_name"),
     account_identifier: formValue(formData, "account_identifier"),
+    account_password: formValue(formData, "account_password"),
     credential_reference: formValue(formData, "credential_reference"),
     total_slots: formValue(formData, "total_slots"),
     used_slots: formValue(formData, "used_slots"),

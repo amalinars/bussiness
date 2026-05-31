@@ -1,4 +1,4 @@
-import type { CustomerStatus, ServiceAccountStatus } from "@/types/database";
+import type { CustomerStatus, ServiceAccountProfileStatus, ServiceAccountStatus } from "@/types/database";
 
 export const CUSTOMER_STATUSES = ["active", "inactive", "archived"] as const satisfies readonly CustomerStatus[];
 
@@ -9,3 +9,11 @@ export const SERVICE_ACCOUNT_STATUSES = [
   "inactive",
   "archived",
 ] as const satisfies readonly ServiceAccountStatus[];
+
+export const SERVICE_ACCOUNT_PROFILE_STATUSES = [
+  "available",
+  "occupied",
+  "reserved",
+  "maintenance",
+  "archived",
+] as const satisfies readonly ServiceAccountProfileStatus[];

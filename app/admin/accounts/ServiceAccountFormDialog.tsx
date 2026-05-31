@@ -48,7 +48,7 @@ export function ServiceAccountFormDialog({ account }: ServiceAccountFormDialogPr
           <DialogTitle className="text-2xl font-black">
             {account ? "Edit service account" : "Add service account"}
           </DialogTitle>
-          <DialogDescription>Track account inventory and slot capacity. Do not store passwords here.</DialogDescription>
+          <DialogDescription>Track account inventory, password, and slot capacity for internal use.</DialogDescription>
         </DialogHeader>
 
         <form action={submitAction} className="space-y-5">
@@ -83,11 +83,20 @@ export function ServiceAccountFormDialog({ account }: ServiceAccountFormDialogPr
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
+              Account password
+              <input
+                name="account_password"
+                defaultValue={account?.account_password ?? ""}
+                placeholder="Password from account sheet"
+                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+              />
+            </label>
+            <label className="space-y-1 text-sm font-heading sm:col-span-2">
               Credential reference
               <input
                 name="credential_reference"
                 defaultValue={account?.credential_reference ?? ""}
-                placeholder="Vault/ref only, no password"
+                placeholder="Optional credential note/reference"
                 className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
               />
             </label>

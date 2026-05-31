@@ -9,6 +9,13 @@ export type ServiceAccountStatus =
   | "inactive"
   | "archived";
 
+export type ServiceAccountProfileStatus =
+  | "available"
+  | "occupied"
+  | "reserved"
+  | "maintenance"
+  | "archived";
+
 export type Customer = {
   id: string;
   name: string;
@@ -26,11 +33,24 @@ export type ServiceAccount = {
   label: string;
   service_name: string;
   account_identifier: string | null;
+  account_password: string | null;
   credential_reference: string | null;
   total_slots: number;
   used_slots: number;
   status: ServiceAccountStatus;
   renewal_date: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type ServiceAccountProfile = {
+  id: string;
+  service_account_id: string;
+  profile_name: string;
+  profile_pin: string | null;
+  is_rentable: boolean;
+  status: ServiceAccountProfileStatus;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -55,6 +75,7 @@ export type ServiceAccountInsert = {
   label: string;
   service_name: string;
   account_identifier?: string | null;
+  account_password?: string | null;
   credential_reference?: string | null;
   total_slots?: number;
   used_slots?: number;
@@ -66,6 +87,20 @@ export type ServiceAccountInsert = {
 };
 
 export type ServiceAccountUpdate = Partial<ServiceAccountInsert>;
+
+export type ServiceAccountProfileInsert = {
+  id?: string;
+  service_account_id: string;
+  profile_name: string;
+  profile_pin?: string | null;
+  is_rentable?: boolean;
+  status?: ServiceAccountProfileStatus;
+  notes?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type ServiceAccountProfileUpdate = Partial<ServiceAccountProfileInsert>;
 
 export type Database = {
   riztama_business: {
@@ -80,6 +115,12 @@ export type Database = {
         Row: ServiceAccount;
         Insert: ServiceAccountInsert;
         Update: ServiceAccountUpdate;
+        Relationships: [];
+      };
+      service_account_profiles: {
+        Row: ServiceAccountProfile;
+        Insert: ServiceAccountProfileInsert;
+        Update: ServiceAccountProfileUpdate;
         Relationships: [];
       };
     };
