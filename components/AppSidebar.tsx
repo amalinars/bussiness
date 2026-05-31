@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { CalendarCheck, LayoutDashboard, Server, UsersRound, Menu, X, WalletCards, ScrollText } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -29,8 +30,15 @@ export function AppSidebar({ className }: AppSidebarProps) {
     <>
       {/* Mobile Top Header Banner with Menu Trigger */}
       <div className="flex w-full items-center justify-between border-b-4 border-border bg-secondary-background p-4 md:hidden">
-        <Link href="/admin/dashboard" className="block">
-          <p className="text-lg font-heading font-black tracking-tight">Riztama Business</p>
+        <Link href="/admin/dashboard" className="flex items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={28}
+            height={28}
+            className="size-7 rounded-base border-2 border-black bg-white object-contain p-0.5"
+          />
+          <p className="text-lg font-heading font-black tracking-tight">Riztama</p>
         </Link>
         <Button
           onClick={() => setIsOpen(!isOpen)}
@@ -50,9 +58,18 @@ export function AppSidebar({ className }: AppSidebarProps) {
         )}
       >
         <div className="mb-6 hidden md:block">
-          <Link href="/admin/dashboard" className="block rounded-base border-2 border-border bg-main p-3 text-main-foreground shadow-shadow">
-            <p className="text-lg font-heading font-black tracking-tight">Riztama Business</p>
-            <p className="text-sm font-base">Internal Subscription Ops</p>
+          <Link href="/admin/dashboard" className="flex items-center gap-3 rounded-base border-2 border-border bg-main p-3 text-main-foreground shadow-shadow">
+            <Image
+              src="/logo.png"
+              alt="Riztama Logo"
+              width={40}
+              height={40}
+              className="size-10 shrink-0 rounded-base border-2 border-black bg-white object-contain p-0.5"
+            />
+            <div className="min-w-0">
+              <p className="text-lg font-heading font-black tracking-tight leading-tight">Riztama</p>
+              <p className="text-xs font-base opacity-90 leading-tight">Internal Ops</p>
+            </div>
           </Link>
         </div>
 
