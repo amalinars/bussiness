@@ -61,6 +61,14 @@ export type SubscriptionFilters = {
   service_account_id?: string | "all";
 };
 
+export async function completeExpiredBookings(): Promise<void> {
+  try {
+    await supabase.rpc("complete_expired_bookings");
+  } catch (error) {
+    console.error("Failed to run complete_expired_bookings RPC:", error);
+  }
+}
+
 export type SubscriptionFormInput = {
   customer_mode?: "existing" | "new";
   customer_id?: string | null;

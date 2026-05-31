@@ -244,6 +244,10 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: unknown;
       };
+      complete_expired_bookings: {
+        Args: Record<PropertyKey, never>;
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
