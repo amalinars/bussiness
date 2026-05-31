@@ -2,6 +2,8 @@ import { createServer } from "http";
 import next from "next";
 import { createClient } from "@supabase/supabase-js";
 
+import { appendAppLog } from "./lib/app-logs.mjs";
+
 const dev = process.env.NODE_ENV !== "production";
 const hostname = process.env.HOSTNAME || "0.0.0.0";
 const port = Number(process.env.PORT || 3000);
@@ -34,16 +36,28 @@ function createSupabaseWorkerClient() {
   });
 }
 
+async function logWorkerEvent(level, message, meta) {
+  try {
+    await appendAppLog({ source: "booking-worker", level, message, meta });
+  } catch (error) {
+    console.error("[booking-worker] failed to write app log:", error);
+  }
+}
+
 async function completeExpiredBookings() {
   if (workerRunning) {
-    console.log("[booking-worker] previous check still running, skipping this tick.");
+    const message = "previous check still running, skipping this tick.";
+    console.log(`[booking-worker] ${message}`);
+    await logWorkerEvent("warn", message);
     return;
   }
 
   const supabase = createSupabaseWorkerClient();
 
   if (!supabase) {
-    console.warn("[booking-worker] skipped: Supabase env is missing.");
+    const message = "skipped: Supabase env is missing.";
+    console.warn(`[booking-worker] ${message}`);
+    await logWorkerEvent("warn", message);
     return;
   }
 
@@ -51,16 +65,26 @@ async function completeExpiredBookings() {
   workerNextRunAt = Date.now() + workerIntervalMs;
 
   try {
-    console.log(`[booking-worker] checking expired bookings in schema '${supabaseSchema}'...`);
+    const startMessage = `checking expired bookings in schema '${supabaseSchema}'...`;
+    console.log(`[booking-worker] ${startMessage}`);
+    await logWorkerEvent("info", startMessage, { schema: supabaseSchema });
+
     const { error } = await supabase.rpc("complete_expired_bookings");
 
     if (error) {
+      const message = `failed: ${error.message}`;
       console.error("[booking-worker] failed:", error.message);
+      await logWorkerEvent("error", message);
     } else {
-      console.log(`[booking-worker] check complete at ${new Date().toLocaleTimeString()}`);
+      const checkedAt = new Date().toLocaleTimeString();
+      const message = `check complete at ${checkedAt}`;
+      console.log(`[booking-worker] ${message}`);
+      await logWorkerEvent("success", message);
     }
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown worker crash";
     console.error("[booking-worker] crashed:", error);
+    await logWorkerEvent("error", `crashed: ${message}`);
   } finally {
     workerRunning = false;
   }
@@ -72,6 +96,7 @@ function startBookingExpiryWorker() {
   }
 
   console.log(`[booking-worker] started. Schema: ${supabaseSchema}. Interval: ${workerIntervalMs}ms`);
+  void logWorkerEvent("info", "worker started", { schema: supabaseSchema, intervalMs: workerIntervalMs });
 
   void completeExpiredBookings();
   workerInterval = setInterval(() => {

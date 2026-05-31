@@ -2,7 +2,7 @@
 
 Each module should visually follow the same neobrutalist dashboard style: thick borders, hard offset shadows, flat colors, chunky controls, and clear hierarchy.
 
-Current active MVP modules are Dashboard, Customers, Service Accounts, Bookings, and Financials. Database scope now includes customers, service accounts, service account profiles, service account costs, rental packages, and subscriptions/bookings. Other modules remain planned for later and should not be implemented until explicitly requested.
+Current active MVP modules are Dashboard, Customers, Service Accounts, Bookings, Financials, and Logs. Database scope now includes customers, service accounts, service account profiles, service account costs, rental packages, and subscriptions/bookings. Other modules remain planned for later and should not be implemented until explicitly requested.
 
 ## Dashboard
 
@@ -126,6 +126,20 @@ Active MVP module exposed as the Financials sidebar page. The page reads finance
 
 Future improvements:
 Payment reconciliation, exports, custom date ranges, receivables/payables separation, and richer profit analytics.
+
+## Logs
+
+Purpose:
+Provide an admin-facing operational log view for local server and worker activity.
+
+Main data handled:
+Append-only local JSONL events from the custom Next server, especially booking expiry worker startup, checks, skips, completion, and errors.
+
+Current status:
+Active MVP utility module exposed as the Logs sidebar page. The page reads recent server-side log entries from the local runtime log file through `lib/app-logs.ts`, polls `/api/logs` every 2 seconds for a more real-time monitoring view, shows latest worker activity/success/error summaries, and renders responsive mobile cards plus a desktop table. Worker logs are written by `server.mjs` without exposing Supabase keys or environment values. Per-second terminal countdown messages remain terminal-only to avoid noisy persisted logs.
+
+Future improvements:
+Log filters, manual refresh controls, pagination, retention cleanup, and broader audit/event coverage.
 
 ## Payments
 
