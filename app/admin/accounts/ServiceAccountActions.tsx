@@ -14,12 +14,13 @@ type ServiceAccountActionsProps = {
 
 export function ServiceAccountActions({ account }: ServiceAccountActionsProps) {
   return (
-    <div className="flex flex-wrap gap-2">
-      <Button asChild size="sm" variant="neutral">
+    <div className="grid w-full grid-cols-3 gap-2 sm:flex sm:flex-wrap">
+      <Button asChild size="sm" variant="neutral" className="w-full sm:w-auto">
         <Link href={`/admin/accounts/${account.id}`}>Profiles</Link>
       </Button>
       <ServiceAccountFormDialog account={account} />
       <form
+        className="w-full sm:w-auto"
         action={archiveServiceAccountAction}
         onSubmit={(event) => {
           if (!confirm(`Archive ${account.label}?`)) {
@@ -28,7 +29,7 @@ export function ServiceAccountActions({ account }: ServiceAccountActionsProps) {
         }}
       >
         <input type="hidden" name="id" value={account.id} />
-        <Button type="submit" size="sm" variant="neutral" disabled={account.status === "archived"}>
+        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={account.status === "archived"}>
           Archive
         </Button>
       </form>

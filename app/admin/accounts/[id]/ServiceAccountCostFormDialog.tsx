@@ -36,25 +36,24 @@ export function ServiceAccountCostFormDialog({ serviceAccountId, cost }: Service
   const action = cost ? updateServiceAccountCostAction : createServiceAccountCostAction;
   const [state, formAction, pending] = useActionState(action, initialState);
 
-  async function submitAction(formData: FormData) {
-    await formAction(formData);
+  if (state.ok && open) {
     setOpen(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" size={cost ? "sm" : "default"} variant={cost ? "neutral" : "default"}>
+        <Button type="button" size={cost ? "sm" : "default"} variant={cost ? "neutral" : "default"} className="w-full sm:w-auto">
           {cost ? "Edit" : "Add cost"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:max-w-2xl sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black">{cost ? "Edit cost" : "Add cost"}</DialogTitle>
+          <DialogTitle className="text-xl font-black sm:text-2xl">{cost ? "Edit cost" : "Add cost"}</DialogTitle>
           <DialogDescription>Record service account spending, payment date, and covered period.</DialogDescription>
         </DialogHeader>
 
-        <form action={submitAction} className="space-y-5">
+        <form action={formAction} className="space-y-5">
           <input type="hidden" name="service_account_id" value={serviceAccountId} />
           {cost ? <input type="hidden" name="cost_id" value={cost.id} /> : null}
 
@@ -66,7 +65,7 @@ export function ServiceAccountCostFormDialog({ serviceAccountId, cost }: Service
                 type="date"
                 name="cost_date"
                 defaultValue={cost?.cost_date ?? ""}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -78,7 +77,7 @@ export function ServiceAccountCostFormDialog({ serviceAccountId, cost }: Service
                 name="amount"
                 defaultValue={cost?.amount ?? ""}
                 placeholder="54000"
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -88,7 +87,7 @@ export function ServiceAccountCostFormDialog({ serviceAccountId, cost }: Service
                 type="date"
                 name="period_start"
                 defaultValue={cost?.period_start ?? ""}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -98,7 +97,7 @@ export function ServiceAccountCostFormDialog({ serviceAccountId, cost }: Service
                 type="date"
                 name="period_end"
                 defaultValue={cost?.period_end ?? ""}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -106,7 +105,7 @@ export function ServiceAccountCostFormDialog({ serviceAccountId, cost }: Service
               <select
                 name="status"
                 defaultValue={cost?.status ?? "paid"}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               >
                 {SERVICE_ACCOUNT_COST_STATUSES.map((status) => (
                   <option key={status} value={status}>
@@ -121,20 +120,20 @@ export function ServiceAccountCostFormDialog({ serviceAccountId, cost }: Service
                 name="notes"
                 defaultValue={cost?.notes ?? ""}
                 rows={3}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
           </div>
 
           {state.error ? (
-            <p className="rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
+            <p className="wrap-break-word rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
           ) : null}
 
-          <DialogFooter>
-            <Button type="button" variant="neutral" onClick={() => setOpen(false)}>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="neutral" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={pending}>
+            <Button type="submit" className="w-full sm:w-auto" disabled={pending}>
               {pending ? "Saving..." : "Save cost"}
             </Button>
           </DialogFooter>

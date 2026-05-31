@@ -67,11 +67,13 @@ export default async function ServiceAccountDetailPage({ params }: ServiceAccoun
       eyebrow="Service Account Profiles"
       description="Manage profile names, PINs, rental availability, and status for this service account."
     >
-      <div className="flex flex-wrap gap-3">
-        <Button asChild variant="neutral">
+      <div className="grid gap-3 sm:flex sm:flex-wrap">
+        <Button asChild variant="neutral" className="w-full sm:w-auto">
           <Link href="/admin/accounts">Back to accounts</Link>
         </Button>
-        <ServiceAccountProfileFormDialog serviceAccountId={account.id} />
+        <div className="sm:hidden">
+          <ServiceAccountProfileFormDialog serviceAccountId={account.id} />
+        </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[0.8fr_1.2fr]">
@@ -83,11 +85,11 @@ export default async function ServiceAccountDetailPage({ params }: ServiceAccoun
           <CardContent className="space-y-3 text-sm font-base">
             <div className="rounded-base border-2 border-border bg-background p-3 shadow-shadow">
               <div className="font-heading">Identifier</div>
-              <div>{account.account_identifier ?? "No identifier"}</div>
+              <div className="wrap-break-word">{account.account_identifier ?? "No identifier"}</div>
             </div>
             <div className="rounded-base border-2 border-border bg-background p-3 shadow-shadow">
               <div className="font-heading">Password</div>
-              <div>{account.account_password ?? "-"}</div>
+              <div className="wrap-break-word">{account.account_password ?? "-"}</div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="rounded-base border-2 border-border bg-background p-3 shadow-shadow">
@@ -107,19 +109,46 @@ export default async function ServiceAccountDetailPage({ params }: ServiceAccoun
         </Card>
 
         <Card className="bg-secondary-background">
-          <CardHeader className="gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-            <div>
-              <CardTitle className="text-xl font-heading font-black">Profiles</CardTitle>
-              <CardDescription>{profiles.length} profile records loaded.</CardDescription>
+          <CardHeader className="grid gap-3 px-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-6">
+            <div className="min-w-0">
+              <CardTitle className="text-lg font-heading font-black sm:text-xl">Profiles</CardTitle>
+              <CardDescription className="wrap-break-word">{profiles.length} profile records loaded.</CardDescription>
             </div>
-            <ServiceAccountProfileFormDialog serviceAccountId={account.id} />
+            <div className="hidden sm:block">
+              <ServiceAccountProfileFormDialog serviceAccountId={account.id} />
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-4 sm:px-6">
             {profiles.length === 0 ? (
               <EmptyState title="No profiles yet" description="Add up to 5 profiles. Only 4 can be marked rentable." />
             ) : (
-              <div className="w-full overflow-x-auto rounded-base border-2 border-border">
-                <table className="w-full border-collapse text-left text-sm font-base">
+              <>
+                <div className="grid gap-3 md:hidden">
+                  {profiles.map((profile) => (
+                    <div key={profile.id} className="min-w-0 space-y-3 rounded-base border-2 border-border bg-background p-3 shadow-shadow">
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <p className="wrap-break-word font-heading font-bold">{profile.profile_name}</p>
+                          <p className="wrap-break-word text-xs text-muted-foreground">PIN: {profile.profile_pin ?? "-"}</p>
+                        </div>
+                        <StatusBadge tone={profileStatusTone[profile.status]}>{profile.status}</StatusBadge>
+                      </div>
+                      <div className="grid gap-2 text-sm font-base">
+                        <div className="rounded-base border border-border bg-secondary-background p-2">
+                          <p className="text-xs text-muted-foreground">Rentable</p>
+                          <p>{profile.is_rentable ? "Yes" : "No"}</p>
+                        </div>
+                        <div className="rounded-base border border-border bg-secondary-background p-2">
+                          <p className="text-xs text-muted-foreground">Notes</p>
+                          <p className="whitespace-pre-wrap wrap-break-word">{profile.notes ?? "-"}</p>
+                        </div>
+                      </div>
+                      <ServiceAccountProfileActions serviceAccountId={account.id} profile={profile} />
+                    </div>
+                  ))}
+                </div>
+                <div className="hidden w-full overflow-x-auto rounded-base border-2 border-border md:block">
+                <table className="min-w-[760px] w-full border-collapse text-left text-sm font-base">
                   <thead className="bg-secondary-background">
                     <tr className="border-b-2 border-border">
                       <th className="px-4 py-3 font-heading">Profile</th>
@@ -148,29 +177,55 @@ export default async function ServiceAccountDetailPage({ params }: ServiceAccoun
                   </tbody>
                 </table>
               </div>
+              </>
             )}
           </CardContent>
         </Card>
       </div>
 
       <Card className="bg-secondary-background">
-        <CardHeader className="gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
-          <div>
-            <CardTitle className="text-xl font-heading font-black">Cost History</CardTitle>
-            <CardDescription>
+        <CardHeader className="grid gap-3 px-4 sm:grid-cols-[1fr_auto] sm:items-center sm:px-6">
+          <div className="min-w-0">
+            <CardTitle className="text-lg font-heading font-black sm:text-xl">Cost History</CardTitle>
+            <CardDescription className="wrap-break-word">
               {costsResult.error ?? `${costs.length} account spending records loaded.`}
             </CardDescription>
           </div>
           <ServiceAccountCostFormDialog serviceAccountId={account.id} />
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-4 sm:px-6">
           {costsResult.error ? (
             <EmptyState title="Cost data unavailable" description={costsResult.error} />
           ) : costs.length === 0 ? (
             <EmptyState title="No costs yet" description="Add the first Netflix account payment record for this service account." />
           ) : (
-            <div className="w-full overflow-x-auto rounded-base border-2 border-border">
-              <table className="w-full border-collapse text-left text-sm font-base">
+            <>
+              <div className="grid gap-3 md:hidden">
+                {costs.map((cost) => (
+                  <div key={cost.id} className="min-w-0 space-y-3 rounded-base border-2 border-border bg-background p-3 shadow-shadow">
+                    <div className="flex flex-wrap items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="wrap-break-word font-heading font-bold">{cost.cost_date}</p>
+                        <p className="wrap-break-word text-xs text-muted-foreground">{cost.period_start} to {cost.period_end}</p>
+                      </div>
+                      <StatusBadge tone={costStatusTone[cost.status]}>{cost.status}</StatusBadge>
+                    </div>
+                    <div className="grid gap-2 text-sm font-base">
+                      <div className="rounded-base border border-border bg-secondary-background p-2">
+                        <p className="text-xs text-muted-foreground">Amount</p>
+                        <p className="wrap-break-word font-heading font-bold">Rp {cost.amount.toLocaleString("id-ID")}</p>
+                      </div>
+                      <div className="rounded-base border border-border bg-secondary-background p-2">
+                        <p className="text-xs text-muted-foreground">Notes</p>
+                        <p className="whitespace-pre-wrap wrap-break-word">{cost.notes ?? "-"}</p>
+                      </div>
+                    </div>
+                    <ServiceAccountCostActions serviceAccountId={account.id} cost={cost} />
+                  </div>
+                ))}
+              </div>
+              <div className="hidden w-full overflow-x-auto rounded-base border-2 border-border md:block">
+              <table className="min-w-[760px] w-full border-collapse text-left text-sm font-base">
                 <thead className="bg-secondary-background">
                   <tr className="border-b-2 border-border">
                     <th className="px-4 py-3 font-heading">Cost date</th>
@@ -202,6 +257,7 @@ export default async function ServiceAccountDetailPage({ params }: ServiceAccoun
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </CardContent>
       </Card>

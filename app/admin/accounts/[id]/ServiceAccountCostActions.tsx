@@ -13,9 +13,10 @@ type ServiceAccountCostActionsProps = {
 
 export function ServiceAccountCostActions({ serviceAccountId, cost }: ServiceAccountCostActionsProps) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:flex-wrap">
       <ServiceAccountCostFormDialog serviceAccountId={serviceAccountId} cost={cost} />
       <form
+        className="w-full sm:w-auto"
         action={cancelServiceAccountCostAction}
         onSubmit={(event) => {
           if (!confirm(`Cancel cost record Rp ${cost.amount.toLocaleString("id-ID")}?`)) {
@@ -25,7 +26,7 @@ export function ServiceAccountCostActions({ serviceAccountId, cost }: ServiceAcc
       >
         <input type="hidden" name="service_account_id" value={serviceAccountId} />
         <input type="hidden" name="cost_id" value={cost.id} />
-        <Button type="submit" size="sm" variant="neutral" disabled={cost.status === "cancelled"}>
+        <Button type="submit" size="sm" variant="neutral" className="w-full sm:w-auto" disabled={cost.status === "cancelled"}>
           Cancel
         </Button>
       </form>

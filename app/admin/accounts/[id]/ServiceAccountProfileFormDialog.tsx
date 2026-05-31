@@ -36,25 +36,24 @@ export function ServiceAccountProfileFormDialog({ serviceAccountId, profile }: S
   const action = profile ? updateServiceAccountProfileAction : createServiceAccountProfileAction;
   const [state, formAction, pending] = useActionState(action, initialState);
 
-  async function submitAction(formData: FormData) {
-    await formAction(formData);
+  if (state.ok && open) {
     setOpen(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button type="button" size={profile ? "sm" : "default"} variant={profile ? "neutral" : "default"}>
+        <Button type="button" size={profile ? "sm" : "default"} variant={profile ? "neutral" : "default"} className="w-full sm:w-auto">
           {profile ? "Edit" : "Add profile"}
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:max-w-2xl sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black">{profile ? "Edit profile" : "Add profile"}</DialogTitle>
+          <DialogTitle className="text-xl font-black sm:text-2xl">{profile ? "Edit profile" : "Add profile"}</DialogTitle>
           <DialogDescription>Manage visible profile name, PIN, rental toggle, and status.</DialogDescription>
         </DialogHeader>
 
-        <form action={submitAction} className="space-y-5">
+        <form action={formAction} className="space-y-5">
           <input type="hidden" name="service_account_id" value={serviceAccountId} />
           {profile ? <input type="hidden" name="profile_id" value={profile.id} /> : null}
 
@@ -65,7 +64,7 @@ export function ServiceAccountProfileFormDialog({ serviceAccountId, profile }: S
                 required
                 name="profile_name"
                 defaultValue={profile?.profile_name ?? ""}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -73,7 +72,7 @@ export function ServiceAccountProfileFormDialog({ serviceAccountId, profile }: S
               <input
                 name="profile_pin"
                 defaultValue={profile?.profile_pin ?? ""}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
             <label className="space-y-1 text-sm font-heading">
@@ -81,7 +80,7 @@ export function ServiceAccountProfileFormDialog({ serviceAccountId, profile }: S
               <select
                 name="status"
                 defaultValue={profile?.status ?? "available"}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               >
                 {SERVICE_ACCOUNT_PROFILE_STATUSES.map((status) => (
                   <option key={status} value={status}>
@@ -105,20 +104,20 @@ export function ServiceAccountProfileFormDialog({ serviceAccountId, profile }: S
                 name="notes"
                 defaultValue={profile?.notes ?? ""}
                 rows={3}
-                className="w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+                className="min-w-0 w-full rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
               />
             </label>
           </div>
 
           {state.error ? (
-            <p className="rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
+            <p className="wrap-break-word rounded-base border-2 border-border bg-main px-3 py-2 text-sm font-heading">{state.error}</p>
           ) : null}
 
-          <DialogFooter>
-            <Button type="button" variant="neutral" onClick={() => setOpen(false)}>
+          <DialogFooter className="gap-2">
+            <Button type="button" variant="neutral" className="w-full sm:w-auto" onClick={() => setOpen(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={pending}>
+            <Button type="submit" className="w-full sm:w-auto" disabled={pending}>
               {pending ? "Saving..." : "Save profile"}
             </Button>
           </DialogFooter>

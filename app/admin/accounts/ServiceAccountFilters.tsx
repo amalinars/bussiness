@@ -53,23 +53,23 @@ export function ServiceAccountFilters({ q = "", status = "all" }: ServiceAccount
   return (
     <form
       onSubmit={submitFilters}
-      className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow md:grid-cols-[1fr_180px_auto_auto] md:items-end"
+      className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow sm:grid-cols-2 lg:grid-cols-[1fr_180px_auto_auto] lg:items-end"
     >
-      <label className="space-y-1 text-sm font-heading">
+      <label className="min-w-0 space-y-1 text-sm font-heading sm:col-span-2 lg:col-span-1">
         Search service accounts
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Label, service name, ID, ref..."
-          className="w-full rounded-base border-2 border-border bg-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+          className="min-w-0 w-full rounded-base border-2 border-border bg-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
         />
       </label>
-      <label className="space-y-1 text-sm font-heading">
+      <label className="min-w-0 space-y-1 text-sm font-heading">
         Status
         <select
           value={selectedStatus}
           onChange={(event) => setSelectedStatus(event.target.value as ServiceAccountStatus | "all")}
-          className="w-full rounded-base border-2 border-border bg-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+          className="min-w-0 w-full rounded-base border-2 border-border bg-background px-3 py-2 text-sm font-base outline-none focus:ring-2 focus:ring-border sm:text-base"
         >
           <option value="all">all</option>
           {SERVICE_ACCOUNT_STATUSES.map((accStatus) => (
@@ -79,8 +79,10 @@ export function ServiceAccountFilters({ q = "", status = "all" }: ServiceAccount
           ))}
         </select>
       </label>
-      <Button type="submit">Apply</Button>
-      <Button type="button" variant="neutral" onClick={clearFilters}>
+      <Button type="submit" className="w-full">
+        Apply
+      </Button>
+      <Button type="button" variant="neutral" className="w-full" onClick={clearFilters}>
         Clear
       </Button>
     </form>
