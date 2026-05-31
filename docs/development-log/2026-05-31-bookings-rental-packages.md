@@ -33,6 +33,11 @@ Added the first booking/subscription transaction flow as a dedicated admin page.
   - `2 Hari` — 2 days — Rp 7.000
   - `3 Hari` — 3 days — Rp 10.000
   - `1 Minggu` — 7 days — Rp 20.000
+- Seeded spreadsheet buyers as active customers.
+- Seeded 24 visible spreadsheet booking rows from the Risma, Jovan, and Tugeder tabs.
+- Preserved income/laba/log-out values in booking notes because payment/profit tables do not exist yet.
+- Added service account dropdown filtering to the Bookings list so users can view rows by Netflix account.
+- Updated booking seed statuses so rows with finished dates are seeded as `completed`; still-running rows remain `booked`.
 
 ## Notes
 

@@ -10,16 +10,23 @@ import type { SubscriptionStatus } from "@/types/database";
 type BookingFiltersProps = {
   q?: string;
   status?: SubscriptionStatus | "all";
+  serviceAccountId?: string | "all";
+  serviceAccounts: {
+    id: string;
+    label: string;
+    service_name: string;
+  }[];
 };
 
-export function BookingFilters({ q = "", status = "all" }: BookingFiltersProps) {
+export function BookingFilters({ q = "", status = "all", serviceAccountId = "all", serviceAccounts }: BookingFiltersProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(q);
   const [selectedStatus, setSelectedStatus] = useState(status);
+  const [selectedServiceAccountId, setSelectedServiceAccountId] = useState(serviceAccountId);
 
-  function updateUrl(nextQuery: string, nextStatus: SubscriptionStatus | "all") {
+  function updateUrl(nextQuery: string, nextStatus: SubscriptionStatus | "all", nextServiceAccountId: string | "all") {
     const params = new URLSearchParams(searchParams);
     const trimmedQuery = nextQuery.trim();
 
@@ -35,25 +42,32 @@ export function BookingFilters({ q = "", status = "all" }: BookingFiltersProps) 
       params.delete("status");
     }
 
+    if (nextServiceAccountId !== "all") {
+      params.set("account", nextServiceAccountId);
+    } else {
+      params.delete("account");
+    }
+
     const search = params.toString();
     router.push(search ? `${pathname}?${search}` : pathname);
   }
 
   function submitFilters(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    updateUrl(query, selectedStatus);
+    updateUrl(query, selectedStatus, selectedServiceAccountId);
   }
 
   function clearFilters() {
     setQuery("");
     setSelectedStatus("all");
+    setSelectedServiceAccountId("all");
     router.push(pathname);
   }
 
   return (
     <form
       onSubmit={submitFilters}
-      className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow md:grid-cols-[1fr_180px_auto_auto] md:items-end"
+      className="grid gap-3 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow md:grid-cols-[1fr_220px_180px_auto_auto] md:items-end"
     >
       <label className="space-y-1 text-sm font-heading">
         Search booking
@@ -63,6 +77,21 @@ export function BookingFilters({ q = "", status = "all" }: BookingFiltersProps) 
           placeholder="Customer, account, profile, package..."
           className="w-full rounded-base border-2 border-border bg-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
         />
+      </label>
+      <label className="space-y-1 text-sm font-heading">
+        Service account
+        <select
+          value={selectedServiceAccountId}
+          onChange={(event) => setSelectedServiceAccountId(event.target.value)}
+          className="w-full rounded-base border-2 border-border bg-background px-3 py-2 font-base outline-none focus:ring-2 focus:ring-border"
+        >
+          <option value="all">All accounts</option>
+          {serviceAccounts.map((account) => (
+            <option key={account.id} value={account.id}>
+              {account.label} — {account.service_name}
+            </option>
+          ))}
+        </select>
       </label>
       <label className="space-y-1 text-sm font-heading">
         Status

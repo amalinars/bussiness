@@ -108,7 +108,7 @@ Planned features:
 - Filtering by status and platform
 
 Current status:
-Active MVP module exposed as the Bookings sidebar page. The page reads `riztama_business.subscriptions` with related customers, service accounts, service account profiles, and rental package snapshots through `lib/subscriptions.ts`. Booking create/edit/archive actions use neobrutalist dialogs, URL-backed search/status filters, package-driven price/end-date defaults, and inline customer creation for new booking flows.
+Active MVP module exposed as the Bookings sidebar page. The page reads `riztama_business.subscriptions` with related customers, service accounts, service account profiles, and rental package snapshots through `lib/subscriptions.ts`. Booking create/edit/archive actions use neobrutalist dialogs, URL-backed search/status/service-account filters, package-driven price/end-date defaults, and inline customer creation for new booking flows.
 
 Future improvements:
 Recurring renewal workflows, advanced reminders, subscription history, and automated status updates.

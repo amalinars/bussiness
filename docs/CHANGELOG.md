@@ -40,6 +40,7 @@
 * Subscription/booking table with customer, service account, profile, package, date, status, and snapshot fields.
 * Dedicated Bookings admin page with URL-backed filters, create/edit/archive actions, package auto price/end date, and inline customer creation.
 * Bookings sidebar navigation item.
+* Spreadsheet buyer and booking rows in `supabase/seed.sql` for Risma, Jovan, and Tugeder tabs.
 
 
 
@@ -59,6 +60,8 @@
 * Updated global typography from Geist to Nunito body text and Fredoka headings for a friendlier dashboard feel.
 * Updated manual seed data to use real Netflix service accounts, account passwords, and profile rows from the spreadsheet screenshots, without importing buyer/subscription rows yet.
 * Expanded active MVP scope from Dashboard, Customers, and Service Accounts to include Bookings as the first transaction flow.
+* Added service account dropdown filtering to the Bookings list so rows can be separated by Netflix account.
+* Updated booking seed statuses so expired spreadsheet bookings are seeded as `completed` instead of `booked`.
 * Updated database planning from the initial two-table foundation to the current customers, service accounts, service account profiles, rental packages, and subscriptions scope.
 
 ### Removed

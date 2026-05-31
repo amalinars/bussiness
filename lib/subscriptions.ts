@@ -55,6 +55,7 @@ export type SubscriptionFormOptionsResult =
 export type SubscriptionFilters = {
   q?: string;
   status?: SubscriptionStatus | "all";
+  service_account_id?: string | "all";
 };
 
 export type SubscriptionFormInput = {
@@ -261,6 +262,10 @@ export async function getSubscriptions(filters: SubscriptionFilters = {}): Promi
 
   if (filters.status && filters.status !== "all") {
     query = query.eq("status", filters.status);
+  }
+
+  if (filters.service_account_id && filters.service_account_id !== "all") {
+    query = query.eq("service_account_id", filters.service_account_id);
   }
 
   const { data, error } = await query.order("start_date", { ascending: false }).order("created_at", { ascending: false });

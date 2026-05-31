@@ -21,6 +21,7 @@ type BookingsPageProps = {
   searchParams: Promise<{
     q?: string;
     status?: string;
+    account?: string;
   }>;
 };
 
@@ -29,17 +30,17 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
 
   const params = await searchParams;
   const status = bookingStatusTone[params.status as keyof typeof bookingStatusTone] ? params.status : "all";
+  const optionsResult = await getSubscriptionFormOptions();
+  const serviceAccountId = optionsResult.error === null && optionsResult.serviceAccounts.some((account) => account.id === params.account)
+    ? params.account
+    : "all";
   const filters = {
     q: params.q ?? "",
     status: status as keyof typeof bookingStatusTone | "all",
+    service_account_id: serviceAccountId,
   };
-  const hasFilters = Boolean(filters.q || filters.status !== "all");
-
-  const [bookingsResult, optionsResult] = await Promise.all([
-    getSubscriptions(filters),
-    getSubscriptionFormOptions(),
-  ]);
-
+  const hasFilters = Boolean(filters.q || filters.status !== "all" || filters.service_account_id !== "all");
+  const bookingsResult = await getSubscriptions(filters);
   const canOpenForm = optionsResult.error === null;
 
   return (
@@ -48,7 +49,12 @@ export default async function BookingsPage({ searchParams }: BookingsPageProps) 
       eyebrow="New MVP module"
       description="Manage customer bookings from service account profiles and rental packages."
     >
-      <BookingFilters q={filters.q} status={filters.status} />
+      <BookingFilters
+        q={filters.q}
+        status={filters.status}
+        serviceAccountId={filters.service_account_id}
+        serviceAccounts={optionsResult.error === null ? optionsResult.serviceAccounts : []}
+      />
       {bookingsResult.error ? (
         <EmptyState title="Booking data unavailable" description={bookingsResult.error} />
       ) : bookingsResult.data.length === 0 ? (

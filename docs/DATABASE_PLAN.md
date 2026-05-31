@@ -144,7 +144,7 @@ Initial UI usage:
 - End-date calculation from `start_date + duration_days`
 
 Implementation status:
-Migration SQL exists. Manual seed SQL includes `1 Hari`, `2 Hari`, `3 Hari`, and `1 Minggu` package rows from the spreadsheet package options.
+Migration SQL exists. Manual seed SQL includes `1 Hari`, `2 Hari`, `3 Hari`, and `1 Minggu` package rows from the spreadsheet package options plus visible spreadsheet buyer/booking rows from Risma, Jovan, and Tugeder tabs.
 
 ### service_accounts
 
