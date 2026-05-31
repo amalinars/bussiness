@@ -16,6 +16,10 @@ export type ServiceAccountProfileStatus =
   | "maintenance"
   | "archived";
 
+export type RentalPackageStatus = "active" | "archived";
+
+export type SubscriptionStatus = "booked" | "completed" | "cancelled" | "archived";
+
 export type Customer = {
   id: string;
   name: string;
@@ -51,6 +55,34 @@ export type ServiceAccountProfile = {
   profile_pin: string | null;
   is_rentable: boolean;
   status: ServiceAccountProfileStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RentalPackage = {
+  id: string;
+  name: string;
+  duration_days: number;
+  default_price: number;
+  status: RentalPackageStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Subscription = {
+  id: string;
+  customer_id: string;
+  service_account_id: string;
+  service_account_profile_id: string;
+  rental_package_id: string;
+  package_name_snapshot: string;
+  duration_days_snapshot: number;
+  price_snapshot: number;
+  start_date: string;
+  end_date: string;
+  status: SubscriptionStatus;
   notes: string | null;
   created_at: string;
   updated_at: string;
@@ -102,6 +134,38 @@ export type ServiceAccountProfileInsert = {
 
 export type ServiceAccountProfileUpdate = Partial<ServiceAccountProfileInsert>;
 
+export type RentalPackageInsert = {
+  id?: string;
+  name: string;
+  duration_days: number;
+  default_price: number;
+  status?: RentalPackageStatus;
+  notes?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type RentalPackageUpdate = Partial<RentalPackageInsert>;
+
+export type SubscriptionInsert = {
+  id?: string;
+  customer_id: string;
+  service_account_id: string;
+  service_account_profile_id: string;
+  rental_package_id: string;
+  package_name_snapshot: string;
+  duration_days_snapshot: number;
+  price_snapshot: number;
+  start_date: string;
+  end_date: string;
+  status?: SubscriptionStatus;
+  notes?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type SubscriptionUpdate = Partial<SubscriptionInsert>;
+
 export type Database = {
   riztama_business: {
     Tables: {
@@ -121,6 +185,18 @@ export type Database = {
         Row: ServiceAccountProfile;
         Insert: ServiceAccountProfileInsert;
         Update: ServiceAccountProfileUpdate;
+        Relationships: [];
+      };
+      rental_packages: {
+        Row: RentalPackage;
+        Insert: RentalPackageInsert;
+        Update: RentalPackageUpdate;
+        Relationships: [];
+      };
+      subscriptions: {
+        Row: Subscription;
+        Insert: SubscriptionInsert;
+        Update: SubscriptionUpdate;
         Relationships: [];
       };
     };

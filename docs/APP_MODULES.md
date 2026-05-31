@@ -2,7 +2,7 @@
 
 Each module should visually follow the same neobrutalist dashboard style: thick borders, hard offset shadows, flat colors, chunky controls, and clear hierarchy.
 
-Current active MVP modules are Dashboard, Customers, and Service Accounts. Initial database scope is intentionally limited to `riztama_business.customers` and `riztama_business.service_accounts`. Customers and Service Accounts now have CRUD and search/filter list pages. Other modules remain planned for later and should not be implemented until explicitly requested.
+Current active MVP modules are Dashboard, Customers, Service Accounts, and Bookings. Database scope now includes customers, service accounts, service account profiles, rental packages, and subscriptions/bookings. Other modules remain planned for later and should not be implemented until explicitly requested.
 
 ## Dashboard
 
@@ -108,7 +108,7 @@ Planned features:
 - Filtering by status and platform
 
 Current status:
-Planned for later. No `subscriptions` table is part of the initial two-table database foundation.
+Active MVP module exposed as the Bookings sidebar page. The page reads `riztama_business.subscriptions` with related customers, service accounts, service account profiles, and rental package snapshots through `lib/subscriptions.ts`. Booking create/edit/archive actions use neobrutalist dialogs, URL-backed search/status filters, package-driven price/end-date defaults, and inline customer creation for new booking flows.
 
 Future improvements:
 Recurring renewal workflows, advanced reminders, subscription history, and automated status updates.

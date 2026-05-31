@@ -31,6 +31,16 @@ export type CustomerMutationResult =
     error: string;
   };
 
+export type CustomerCreateResult =
+  | {
+    data: Customer;
+    error: null;
+  }
+  | {
+    data: null;
+    error: string;
+  };
+
 export type CustomerFilters = {
   q?: string;
   status?: CustomerStatus | "all";
@@ -79,6 +89,15 @@ function toMutationError(action: string, error: unknown): CustomerMutationResult
   };
 }
 
+function toCreateError(action: string, error: unknown): CustomerCreateResult {
+  console.error(action, error);
+
+  return {
+    data: null,
+    error: "Customer could not be saved right now.",
+  };
+}
+
 export async function getCustomers(filters: CustomerFilters = {}): Promise<CustomersResult> {
   let query = supabase.from("customers").select(customerSelect);
 
@@ -116,24 +135,34 @@ export async function getCustomers(filters: CustomerFilters = {}): Promise<Custo
 }
 
 export async function createCustomer(input: CustomerFormInput): Promise<CustomerMutationResult> {
+  const result = await createCustomerRecord(input);
+
+  if (result.error) {
+    return { ok: false, error: result.error };
+  }
+
+  return { ok: true, error: null };
+}
+
+export async function createCustomerRecord(input: CustomerFormInput): Promise<CustomerCreateResult> {
   let payload: CustomerInsert;
 
   try {
     payload = normalizeCustomerInput(input);
   } catch (error) {
     return {
-      ok: false,
+      data: null,
       error: error instanceof Error ? error.message : "Customer data is not valid.",
     };
   }
 
-  const { error } = await supabase.from("customers").insert(payload);
+  const { data, error } = await supabase.from("customers").insert(payload).select(customerSelect).single();
 
   if (error) {
-    return toMutationError("Failed to create customer", error);
+    return toCreateError("Failed to create customer", error);
   }
 
-  return { ok: true, error: null };
+  return { data, error: null };
 }
 
 export async function updateCustomer(id: string, input: CustomerFormInput): Promise<CustomerMutationResult> {

@@ -33,8 +33,259 @@ insert into riztama_business.customers (
     'citra@example.test',
     'archived',
     'Sample archived customer.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000001',
+    'jovan',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000002',
+    'rara',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000003',
+    'tabina',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000004',
+    'nopy',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000005',
+    'ninis',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000006',
+    'santi',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000007',
+    'ayuni',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000008',
+    'kezia',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000009',
+    'tiarad',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000010',
+    'audrey',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000011',
+    'anindita',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000012',
+    'farrel',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000013',
+    'anon',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000014',
+    'yunia',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000015',
+    'sein',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000016',
+    'ra',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000017',
+    'vina',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000018',
+    'va',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000019',
+    'rafi',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000020',
+    'tira',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000021',
+    'naa',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
+  ),
+  (
+    '10000000-0000-4000-8000-000000000022',
+    'yosefine',
+    'Spreadsheet buyer',
+    null,
+    null,
+    'active',
+    'Seeded from Netflix buyer spreadsheet.'
   )
-on conflict (id) do nothing;
+on conflict (id) do update set
+  name = excluded.name,
+  contact_label = excluded.contact_label,
+  phone = excluded.phone,
+  email = excluded.email,
+  status = excluded.status,
+  notes = excluded.notes;
+
+insert into riztama_business.rental_packages (
+  id,
+  name,
+  duration_days,
+  default_price,
+  status,
+  notes
+) values
+  (
+    'dddddddd-dddd-4ddd-8ddd-dddddddddd01',
+    '1 Hari',
+    1,
+    5000,
+    'active',
+    'Seeded from spreadsheet package options.'
+  ),
+  (
+    'dddddddd-dddd-4ddd-8ddd-dddddddddd02',
+    '2 Hari',
+    2,
+    7000,
+    'active',
+    'Seeded from spreadsheet package options.'
+  ),
+  (
+    'dddddddd-dddd-4ddd-8ddd-dddddddddd03',
+    '3 Hari',
+    3,
+    10000,
+    'active',
+    'Seeded from spreadsheet package options.'
+  ),
+  (
+    'dddddddd-dddd-4ddd-8ddd-dddddddddd04',
+    '1 Minggu',
+    7,
+    20000,
+    'active',
+    'Seeded from spreadsheet package options.'
+  )
+on conflict (id) do update set
+  name = excluded.name,
+  duration_days = excluded.duration_days,
+  default_price = excluded.default_price,
+  status = excluded.status,
+  notes = excluded.notes;
 
 insert into riztama_business.service_accounts (
   id,

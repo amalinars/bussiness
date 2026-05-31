@@ -16,22 +16,27 @@ Related development history:
 
 ## Current Database Scope
 
-Initial database scope is limited to:
+Current database scope includes:
 
 - Customers
 - Service Accounts
+- Service Account Profiles
+- Rental Packages
+- Subscriptions/Bookings
 
-The initial migration intentionally creates only two business tables inside the `riztama_business` schema:
+The current business tables inside the `riztama_business` schema are:
 
 - `riztama_business.customers`
 - `riztama_business.service_accounts`
+- `riztama_business.service_account_profiles`
+- `riztama_business.rental_packages`
+- `riztama_business.subscriptions`
 
-The Dashboard will read summary data from these modules later.
+The Dashboard currently reads customer and service account summaries. Booking/subscription summaries can be added later.
 
-The following modules are not part of the first database implementation unless explicitly requested:
+The following modules are not part of the current database implementation unless explicitly requested:
 
 - Platforms
-- Subscriptions
 - Payments
 - Reminders
 - Settings
@@ -52,12 +57,11 @@ Supabase-related application logic should live inside `/lib` or dedicated servic
 - Use `created_at` and `updated_at` timestamps on main tables.
 - Use clear status constants instead of hardcoded strings scattered through the app.
 - Keep fields simple until real business workflows require more complexity.
-- Do not store service account passwords in plain text.
+- Service account passwords may be stored in plain text only for the current private internal workflow per explicit user request; revisit before public/authenticated production use.
 - Do not add authentication rules yet.
-- RLS is enabled on the two initial tables as a Supabase production-safety baseline.
-- Temporary read-only `SELECT` policies are present so the current anon-key Supabase client can load the internal admin list pages before authentication exists.
-- Temporary customer `INSERT` and `UPDATE` policies are present so Customer create, edit, and archive-only actions work before authentication exists. Revisit these policies when authentication or server-only privileged access is introduced.
-- Do not create additional business tables such as `platforms`, `subscriptions`, `payments`, `reminders`, or slot assignment tables until explicitly requested.
+- RLS is enabled on current business tables as a Supabase production-safety baseline.
+- Temporary read/write policies are present so the current anon-key Supabase client can load and mutate internal admin pages before authentication exists. Revisit these policies when authentication or server-only privileged access is introduced.
+- Do not create additional business tables such as `platforms`, `payments`, `reminders`, or slot assignment tables until explicitly requested.
 
 ## Planned Tables
 
@@ -106,6 +110,41 @@ Not included yet:
 
 Implementation status:
 Migration SQL exists.
+
+### rental_packages
+
+Purpose:
+Store reusable rental package options used when creating bookings.
+
+Database object:
+`riztama_business.rental_packages`
+
+Planned fields:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` | Primary key. |
+| `name` | `text` | Required package name, such as `1 Hari` or `1 Minggu`. |
+| `duration_days` | `integer` | Required positive duration in days. |
+| `default_price` | `integer` | Required default package price in rupiah. |
+| `status` | `text` | Uses rental package status constants. |
+| `notes` | `text` | Optional internal notes. |
+| `created_at` | `timestamptz` | Created timestamp. |
+| `updated_at` | `timestamptz` | Updated timestamp. |
+
+Planned rental package statuses:
+
+- `active`
+- `archived`
+
+Initial UI usage:
+
+- Booking form package dropdown
+- Default price fill
+- End-date calculation from `start_date + duration_days`
+
+Implementation status:
+Migration SQL exists. Manual seed SQL includes `1 Hari`, `2 Hari`, `3 Hari`, and `1 Minggu` package rows from the spreadsheet package options.
 
 ### service_accounts
 
@@ -159,13 +198,54 @@ Not included yet:
 Implementation status:
 Migration SQL exists.
 
-## Initial Relationship Plan
+### subscriptions
 
-There is no direct relationship required between `customers` and `service_accounts` in the first database step.
+Purpose:
+Store customer booking transactions and assigned service account profiles.
 
-The relationship between customers and service account slots should be introduced later through a `subscriptions` or `account_slots` model after the customer and service account modules are stable.
+Database object:
+`riztama_business.subscriptions`
 
-No foreign key between `riztama_business.customers` and `riztama_business.service_accounts` is required in the current initial migration because direct customer-to-account assignment is not part of the two-table foundation yet.
+Planned fields:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` | Primary key. |
+| `customer_id` | `uuid` | Required FK to `customers.id`. |
+| `service_account_id` | `uuid` | Required FK to `service_accounts.id`. |
+| `service_account_profile_id` | `uuid` | Required FK to `service_account_profiles.id`. |
+| `rental_package_id` | `uuid` | Required FK to `rental_packages.id`. |
+| `package_name_snapshot` | `text` | Package name copied at booking time. |
+| `duration_days_snapshot` | `integer` | Package duration copied at booking time. |
+| `price_snapshot` | `integer` | Booking price copied/overridden at booking time. |
+| `start_date` | `date` | Required booking start date. |
+| `end_date` | `date` | Required booking end date. |
+| `status` | `text` | Uses subscription/booking status constants. |
+| `notes` | `text` | Optional internal notes. |
+| `created_at` | `timestamptz` | Created timestamp. |
+| `updated_at` | `timestamptz` | Updated timestamp. |
+
+Planned subscription statuses:
+
+- `booked`
+- `completed`
+- `cancelled`
+- `archived`
+
+Initial UI usage:
+
+- Dedicated `/admin/bookings` page
+- Existing-customer selection
+- Inline new-customer creation during booking
+- Package-driven price and end date defaults
+- Soft archive through `status = 'archived'`
+
+Implementation status:
+Migration SQL exists.
+
+## Relationship Plan
+
+`subscriptions` now connects customers to rented service account profiles through FKs to `customers`, `service_accounts`, `service_account_profiles`, and `rental_packages`. Package name, duration, and price are snapshotted into the subscription row so historical bookings remain stable if package defaults change later.
 
 ## Derived Values
 
@@ -199,7 +279,6 @@ Service Accounts:
 Future database planning may add:
 
 - `platforms`
-- `subscriptions`
 - `payments`
 - `reminders`
 - `settings`
@@ -243,16 +322,19 @@ Created:
 - TypeScript database row, insert, and update types.
 - Status constants.
 - Manual seed SQL for safe local/VPS Supabase testing in `supabase/seed.sql`.
+- Rental package table and package seed rows.
+- Subscription/booking table linking customers, service accounts, profiles, and packages.
+- Temporary rental package and subscription `SELECT`, `INSERT`, and `UPDATE` policies for the current unauthenticated dev setup.
 
 Not created:
 
 - Supabase project link.
 - Applied remote database migration.
 - Customer detail pages.
-- Customer assignment/subscriptions to service account profiles.
+- Payment tracking for subscription rows.
 - Authentication.
 - Authenticated role-based RLS policies.
-- Tables for Platforms, Subscriptions, Payments, Reminders, Settings, or slot assignment.
+- Tables for Platforms, Payments, Reminders, Settings, or separate slot assignment.
 
 ## Decision History
 
@@ -265,6 +347,7 @@ Not created:
 - 2026-05-30: Service Account CRUD was added with create/edit dialog actions, archive-only delete behavior, and slot validation. Temporary service account `INSERT` and `UPDATE` policies exist only for the current unauthenticated dev setup. See `docs/development-log/2026-05-30-service-account-crud.md`.
 - 2026-05-30: Service account profiles were added for Netflix-style profile/PIN management. A service account can have up to 5 active profiles and up to 4 rentable active profiles. See `docs/development-log/2026-05-30-service-account-profiles.md`.
 - 2026-05-31: `account_password` was added to service accounts for the user's private internal spreadsheet migration workflow. See `docs/development-log/2026-05-31-service-account-password-seed.md`.
+- 2026-05-31: Rental packages and subscriptions/bookings were added as the first transaction flow. Bookings use package snapshots and support inline customer creation. See `docs/development-log/2026-05-31-bookings-rental-packages.md`.
 
 ## Open Questions
 

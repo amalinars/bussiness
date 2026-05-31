@@ -36,6 +36,10 @@
 * Service account profile management with visible PIN, rentable toggle, max 5 active profiles, and max 4 rentable active profiles.
 * Temporary Service Account Profile `SELECT`, `INSERT`, and `UPDATE` RLS policies for the current unauthenticated dev setup.
 * Service account password field for the current private internal spreadsheet workflow.
+* Rental package master table with seeded spreadsheet package options.
+* Subscription/booking table with customer, service account, profile, package, date, status, and snapshot fields.
+* Dedicated Bookings admin page with URL-backed filters, create/edit/archive actions, package auto price/end date, and inline customer creation.
+* Bookings sidebar navigation item.
 
 
 
@@ -54,6 +58,8 @@
 * Marked Customers and Service Accounts pages as request-time rendered so Supabase reads are not executed during static prerendering.
 * Updated global typography from Geist to Nunito body text and Fredoka headings for a friendlier dashboard feel.
 * Updated manual seed data to use real Netflix service accounts, account passwords, and profile rows from the spreadsheet screenshots, without importing buyer/subscription rows yet.
+* Expanded active MVP scope from Dashboard, Customers, and Service Accounts to include Bookings as the first transaction flow.
+* Updated database planning from the initial two-table foundation to the current customers, service accounts, service account profiles, rental packages, and subscriptions scope.
 
 ### Removed
 
