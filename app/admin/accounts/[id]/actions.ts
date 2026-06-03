@@ -52,6 +52,7 @@ export async function createServiceAccountProfileAction(
   }
 
   revalidatePath(`/admin/accounts/${serviceAccountId}`);
+  revalidatePath("/admin/dashboard");
 
   return { ok: true, error: null };
 }
@@ -75,6 +76,7 @@ export async function updateServiceAccountProfileAction(
   }
 
   revalidatePath(`/admin/accounts/${serviceAccountId}`);
+  revalidatePath("/admin/dashboard");
 
   return { ok: true, error: null };
 }
@@ -91,5 +93,6 @@ export async function archiveServiceAccountProfileAction(formData: FormData): Pr
 
   if (result.ok) {
     revalidatePath(`/admin/accounts/${serviceAccountId}`);
+    revalidatePath("/admin/dashboard");
   }
 }

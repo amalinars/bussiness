@@ -1,5 +1,12 @@
 export const BUSINESS_TIME_ZONE = "Asia/Jakarta";
 
+export type PeriodFilter = "day" | "week" | "month" | "all";
+
+export type DateOnlyRange = {
+  startDate: string;
+  endDate: string;
+};
+
 function toDatePartMap(date: Date, timeZone: string) {
   return Object.fromEntries(
     new Intl.DateTimeFormat("en-US", {
@@ -37,6 +44,46 @@ export function addDaysToDateOnly(dateValue: string, days: number) {
   const date = new Date(Date.UTC(year, month - 1, day + days));
 
   return date.toISOString().slice(0, 10);
+}
+
+export function getWeekRangeForDateInTimeZone(date: Date, timeZone = BUSINESS_TIME_ZONE) {
+  const todayDate = toDateOnlyInTimeZone(date, timeZone);
+  const [year, month, day] = todayDate.split("-").map(Number);
+  const utcDate = new Date(Date.UTC(year, month - 1, day));
+  const dayOfWeek = utcDate.getUTCDay();
+  const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+  const weekStart = addDaysToDateOnly(todayDate, -daysSinceMonday);
+
+  return {
+    weekStart,
+    weekEnd: addDaysToDateOnly(weekStart, 6),
+  };
+}
+
+export function normalizePeriodFilter(period?: string | null): PeriodFilter {
+  return period === "day" || period === "week" || period === "month" || period === "all" ? period : "all";
+}
+
+export function getDateRangeForPeriod(period: PeriodFilter, date: Date = new Date(), timeZone = BUSINESS_TIME_ZONE): DateOnlyRange | null {
+  if (period === "all") {
+    return null;
+  }
+
+  if (period === "day") {
+    const dateOnly = toDateOnlyInTimeZone(date, timeZone);
+
+    return { startDate: dateOnly, endDate: dateOnly };
+  }
+
+  if (period === "week") {
+    const { weekStart, weekEnd } = getWeekRangeForDateInTimeZone(date, timeZone);
+
+    return { startDate: weekStart, endDate: weekEnd };
+  }
+
+  const { monthStart, monthEnd } = getMonthRangeForDateInTimeZone(date, timeZone);
+
+  return { startDate: monthStart, endDate: monthEnd };
 }
 
 export function isDateInRange(dateValue: string, startDate: string, endDate: string) {

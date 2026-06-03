@@ -4,6 +4,7 @@
 
 ### Added
 
+* Dashboard Available Profiles card with quick edit access for rentable available service account profiles.
 * Shared dashboard date-range regression test for monthly service account cost overlap behavior.
 * Initial project documentation.
 * Initial project context.
@@ -48,7 +49,7 @@
 
 ### Changed
 
-* Dashboard gross profit now uses all-time booking value minus all-time supplier costs, so the top-level business result matches total money in/out.
+* Dashboard gross profit now uses all-time booking value minus all-time supplier costs, so the top-level and per-service-account business results match total money in/out.
 * Financials selected-month summaries now use active period overlap for booking revenue and supplier expenses instead of relying only on booking start dates or expense payment dates.
 * Dashboard monthly spent now counts service account cost periods that overlap the current month instead of relying only on payment `cost_date`.
 * Documented that the initial database foundation intentionally uses only the `riztama_business.customers` and `riztama_business.service_accounts` tables.

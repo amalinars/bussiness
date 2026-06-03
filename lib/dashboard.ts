@@ -1,12 +1,14 @@
 import { supabase } from "@/lib/supabase";
 import {
   addDaysToDateOnly,
+  getDateRangeForPeriod,
   getMonthRangeForDateInTimeZone,
   isDateInRange,
   isDateRangeOverlapping,
   toDateOnlyInTimeZone,
+  type PeriodFilter,
 } from "@/lib/date-ranges";
-import type { ServiceAccount, ServiceAccountCost, Subscription } from "@/types/database";
+import type { ServiceAccount, ServiceAccountCost, ServiceAccountProfile, Subscription } from "@/types/database";
 
 type DashboardSubscriptionRow = Pick<
   Subscription,
@@ -31,6 +33,13 @@ type DashboardServiceAccountCostRow = Pick<
   "id" | "service_account_id" | "cost_date" | "period_start" | "period_end" | "amount" | "status"
 >;
 
+type DashboardAvailableProfileRow = Pick<
+  ServiceAccountProfile,
+  "id" | "service_account_id" | "profile_name" | "profile_pin" | "is_rentable" | "status" | "notes" | "created_at" | "updated_at"
+> & {
+  service_accounts: Pick<ServiceAccount, "id" | "label" | "service_name" | "status"> | null;
+};
+
 function formatDateOnly(dateValue: string) {
   return new Date(`${dateValue}T00:00:00.000Z`).toLocaleDateString("id-ID", {
     day: "numeric",
@@ -38,9 +47,10 @@ function formatDateOnly(dateValue: string) {
   });
 }
 
-export async function getDashboardData() {
+export async function getDashboardData(period: PeriodFilter = "all") {
   const today = new Date();
   const todayDate = toDateOnlyInTimeZone(today);
+  const selectedRange = getDateRangeForPeriod(period, today);
   const { monthStart: currentMonthStart, monthEnd: currentMonthEnd } = getMonthRangeForDateInTimeZone(today);
   const endingSoonDate = addDaysToDateOnly(todayDate, 3);
 
@@ -53,6 +63,7 @@ export async function getDashboardData() {
     { data: recentAccounts },
     { data: subscriptionsData },
     { data: costsData },
+    { data: availableProfilesData },
   ] = await Promise.all([
     supabase
       .from("customers")
@@ -93,6 +104,16 @@ export async function getDashboardData() {
       .from("service_account_costs")
       .select("id,service_account_id,cost_date,period_start,period_end,amount,status")
       .neq("status", "cancelled"),
+    supabase
+      .from("service_account_profiles")
+      .select(`
+        id,service_account_id,profile_name,profile_pin,is_rentable,status,notes,created_at,updated_at,
+        service_accounts(id,label,service_name,status)
+      `)
+      .eq("status", "available")
+      .eq("is_rentable", true)
+      .order("created_at", { ascending: true })
+      .limit(12),
   ]);
 
   const totalSlots = accountsData?.reduce((acc, curr) => acc + (curr.total_slots || 0), 0) || 0;
@@ -100,7 +121,38 @@ export async function getDashboardData() {
   const availableSlots = Math.max(0, totalSlots - usedSlots);
   const subscriptions = (subscriptionsData ?? []) as unknown as DashboardSubscriptionRow[];
   const costs = (costsData ?? []) as unknown as DashboardServiceAccountCostRow[];
+  const availableProfiles = ((availableProfilesData ?? []) as unknown as DashboardAvailableProfileRow[])
+    .filter((profile) => profile.service_accounts?.status !== "archived")
+    .sort((a, b) => {
+      const accountCompare = (a.service_accounts?.label ?? "").localeCompare(b.service_accounts?.label ?? "");
+      return accountCompare || a.profile_name.localeCompare(b.profile_name);
+    })
+    .map((profile) => ({
+      id: profile.id,
+      service_account_id: profile.service_account_id,
+      profile_name: profile.profile_name,
+      profile_pin: profile.profile_pin,
+      is_rentable: profile.is_rentable,
+      status: profile.status,
+      notes: profile.notes,
+      created_at: profile.created_at,
+      updated_at: profile.updated_at,
+      accountLabel: profile.service_accounts?.label ?? "Unknown account",
+      serviceName: profile.service_accounts?.service_name ?? "Unknown service",
+    }));
   const countedSubscriptions = subscriptions.filter((subscription) => subscription.status === "booked" || subscription.status === "completed");
+  const selectedSubscriptions = selectedRange
+    ? countedSubscriptions.filter((subscription) =>
+        isDateRangeOverlapping(subscription.start_date, subscription.end_date, selectedRange.startDate, selectedRange.endDate),
+      )
+    : countedSubscriptions;
+  const selectedCosts = selectedRange
+    ? costs.filter(
+        (cost) =>
+          cost.status !== "cancelled" &&
+          isDateRangeOverlapping(cost.period_start, cost.period_end, selectedRange.startDate, selectedRange.endDate),
+      )
+    : costs;
   const currentMonthSubscriptions = countedSubscriptions.filter((subscription) =>
     isDateRangeOverlapping(subscription.start_date, subscription.end_date, currentMonthStart, currentMonthEnd),
   );
@@ -111,8 +163,8 @@ export async function getDashboardData() {
   );
   const activeBookingsCount = subscriptions.filter((subscription) => subscription.status === "booked").length;
   const completedBookingsCount = subscriptions.filter((subscription) => subscription.status === "completed").length;
-  const bookingValue = countedSubscriptions.reduce((acc, subscription) => acc + subscription.price_snapshot, 0);
-  const totalSpent = costs.reduce((acc, cost) => acc + cost.amount, 0);
+  const bookingValue = selectedSubscriptions.reduce((acc, subscription) => acc + subscription.price_snapshot, 0);
+  const totalSpent = selectedCosts.reduce((acc, cost) => acc + cost.amount, 0);
   const grossProfit = bookingValue - totalSpent;
   const monthlyBookingValue = currentMonthSubscriptions.reduce((acc, subscription) => acc + subscription.price_snapshot, 0);
   const monthlySpent = currentMonthCosts.reduce((acc, cost) => acc + cost.amount, 0);
@@ -151,8 +203,8 @@ export async function getDashboardData() {
           completedBookings: 0,
           bookingValue: 0,
           monthlyBookingValue: 0,
-          monthlySpent: 0,
-          monthlyGrossProfit: 0,
+          spent: 0,
+          grossProfit: 0,
         };
 
         existing.totalBookings += 1;
@@ -184,18 +236,18 @@ export async function getDashboardData() {
           completedBookings: number;
           bookingValue: number;
           monthlyBookingValue: number;
-          monthlySpent: number;
-          monthlyGrossProfit: number;
+          spent: number;
+          grossProfit: number;
         }
       >(),
     ).values(),
   ).sort((a, b) => b.totalBookings - a.totalBookings);
 
-  // Inject monthly costs and compute gross profit per service account
+  // Inject all-time costs and compute gross profit per service account.
   for (const accountSummary of bookingByServiceAccount) {
-    const accountCosts = currentMonthCosts.filter((cost) => cost.service_account_id === accountSummary.id);
-    accountSummary.monthlySpent = accountCosts.reduce((acc, cost) => acc + cost.amount, 0);
-    accountSummary.monthlyGrossProfit = accountSummary.monthlyBookingValue - accountSummary.monthlySpent;
+    const accountCosts = costs.filter((cost) => cost.service_account_id === accountSummary.id);
+    accountSummary.spent = accountCosts.reduce((acc, cost) => acc + cost.amount, 0);
+    accountSummary.grossProfit = accountSummary.bookingValue - accountSummary.spent;
   }
 
   const recentActivity = [
@@ -233,6 +285,7 @@ export async function getDashboardData() {
     endingSoonCount: endingSoonBookings.length,
     endingSoonBookings,
     bookingByServiceAccount,
+    availableProfiles,
     recentActivity,
   };
 }

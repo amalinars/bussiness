@@ -3,16 +3,28 @@ import { CalendarClock, CheckCircle2, LayoutGrid, Server, UsersRound, WalletCard
 
 import { MetricCard } from "@/components/MetricCard";
 import { PageContainer } from "@/components/PageContainer";
+import { PeriodFilterLinks } from "@/components/PeriodFilterLinks";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDashboardData } from "@/lib/dashboard";
+import { normalizePeriodFilter } from "@/lib/date-ranges";
 import { Countdown } from "@/components/Countdown";
+import { ServiceAccountProfileFormDialog } from "../accounts/[id]/ServiceAccountProfileFormDialog";
 
 export const revalidate = 0;
 
-export default async function DashboardPage() {
+type DashboardPageProps = {
+  searchParams: Promise<{
+    period?: string;
+  }>;
+};
+
+export default async function DashboardPage({ searchParams }: DashboardPageProps) {
   await connection();
-  const data = await getDashboardData();
+  const { period } = await searchParams;
+  const selectedPeriod = normalizePeriodFilter(period);
+  const data = await getDashboardData(selectedPeriod);
+  const periodLabel = selectedPeriod === "all" ? "All-time" : selectedPeriod === "day" ? "Today" : selectedPeriod === "week" ? "This week" : "This month";
 
   const businessMetrics = [
     {
@@ -56,21 +68,21 @@ export default async function DashboardPage() {
     {
       title: "Booking Value",
       value: `Rp ${data.bookingValue.toLocaleString("id-ID")}`,
-      helper: "All-time total, not payment income",
+      helper: `${periodLabel} booking value`,
       icon: WalletCards,
       tone: "pink" as const,
     },
     {
       title: "Total Spent",
       value: `Rp ${data.totalSpent.toLocaleString("id-ID")}`,
-      helper: "All-time supplier costs",
+      helper: `${periodLabel} supplier costs`,
       icon: WalletCards,
       tone: "yellow" as const,
     },
     {
       title: "Gross Profit",
       value: `Rp ${data.grossProfit.toLocaleString("id-ID")}`,
-      helper: "All-time booking value - all-time spent",
+      helper: `${periodLabel} booking value - spent`,
       icon: CheckCircle2,
       tone: data.grossProfit >= 0 ? ("green" as const) : ("pink" as const),
     },
@@ -82,6 +94,14 @@ export default async function DashboardPage() {
       eyebrow="Overview"
       description="Key metrics, upcoming renewals, and recent activity."
     >
+      <div className="flex flex-col gap-3 rounded-base border-2 border-border bg-secondary-background p-4 shadow-shadow sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="font-heading font-bold">Period Filter</p>
+          <p className="text-sm text-muted-foreground">Showing {periodLabel.toLowerCase()} financial totals.</p>
+        </div>
+        <PeriodFilterLinks selectedPeriod={selectedPeriod} basePath="/admin/dashboard" />
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {businessMetrics.map((metric) => (
           <MetricCard key={metric.title} {...metric} />
@@ -123,13 +143,13 @@ export default async function DashboardPage() {
                     </div>
                     <div className="rounded-base border border-border bg-secondary-background p-2 text-xs font-base space-y-1">
                       <div className="flex justify-between">
-                        <span>Spent (this month):</span>
-                        <span className="font-bold">Rp {account.monthlySpent.toLocaleString("id-ID")}</span>
+                        <span>Spent (all-time):</span>
+                        <span className="font-bold">Rp {account.spent.toLocaleString("id-ID")}</span>
                       </div>
                       <div className="flex justify-between border-t border-border/50 pt-1">
                         <span>Gross profit:</span>
-                        <span className={`font-bold ${account.monthlyGrossProfit >= 0 ? "text-green-600" : "text-red-600"}`}>
-                          Rp {account.monthlyGrossProfit.toLocaleString("id-ID")}
+                        <span className={`font-bold ${account.grossProfit >= 0 ? "text-green-600" : "text-red-600"}`}>
+                          Rp {account.grossProfit.toLocaleString("id-ID")}
                         </span>
                       </div>
                     </div>
@@ -180,6 +200,48 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card className="bg-secondary-background">
+        <CardHeader>
+          <CardTitle className="text-xl font-heading font-black">
+            Available Profiles
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {data.availableProfiles.length > 0 ? (
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+              {data.availableProfiles.map((profile) => (
+                <div key={profile.id} className="min-w-0 space-y-3 rounded-base border-2 border-border bg-background p-4 shadow-shadow">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="wrap-break-word font-heading font-bold">{profile.profile_name}</p>
+                      <p className="wrap-break-word text-sm text-muted-foreground">{profile.accountLabel} — {profile.serviceName}</p>
+                    </div>
+                    <StatusBadge tone="active">{profile.status}</StatusBadge>
+                  </div>
+                  <div className="grid gap-2 text-sm font-base">
+                    <div className="rounded-base border border-border bg-secondary-background p-2">
+                      <p className="text-xs text-muted-foreground">PIN</p>
+                      <p>{profile.profile_pin ?? "-"}</p>
+                    </div>
+                    {profile.notes ? (
+                      <div className="rounded-base border border-border bg-secondary-background p-2">
+                        <p className="text-xs text-muted-foreground">Notes</p>
+                        <p className="whitespace-pre-wrap wrap-break-word">{profile.notes}</p>
+                      </div>
+                    ) : null}
+                  </div>
+                  <ServiceAccountProfileFormDialog serviceAccountId={profile.service_account_id} profile={profile} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-base border-2 border-dashed border-border p-8 text-center">
+              <p className="text-muted-foreground font-base">No available rentable profiles found.</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="bg-secondary-background">
