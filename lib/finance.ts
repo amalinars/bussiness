@@ -1,3 +1,8 @@
+import {
+  getMonthKeysTouchedByDateRange,
+  getMonthRangeForMonthKey,
+  isDateRangeOverlapping,
+} from "@/lib/date-ranges";
 import { supabase } from "@/lib/supabase";
 import type { ServiceAccountCost, Subscription } from "@/types/database";
 
@@ -44,29 +49,78 @@ function toMonthLabel(monthKey: string) {
   return date.toLocaleDateString("id-ID", { month: "short", year: "2-digit" });
 }
 
+export function isSubscriptionCountedForRevenue(subscription: Pick<Subscription, "status">) {
+  return subscription.status === "booked" || subscription.status === "completed";
+}
+
+export function isCostCountedForExpense(cost: Pick<ServiceAccountCost, "status">) {
+  return cost.status !== "cancelled";
+}
+
+export function filterSubscriptionsForMonth<T extends Pick<Subscription, "start_date" | "end_date" | "status">>(
+  subscriptions: T[],
+  monthKey: string,
+) {
+  const { monthStart, monthEnd } = getMonthRangeForMonthKey(monthKey);
+
+  return subscriptions.filter(
+    (subscription) =>
+      isSubscriptionCountedForRevenue(subscription) &&
+      isDateRangeOverlapping(subscription.start_date, subscription.end_date, monthStart, monthEnd),
+  );
+}
+
+export function filterCostsForMonth<T extends Pick<ServiceAccountCost, "period_start" | "period_end" | "status">>(
+  costs: T[],
+  monthKey: string,
+) {
+  const { monthStart, monthEnd } = getMonthRangeForMonthKey(monthKey);
+
+  return costs.filter(
+    (cost) =>
+      isCostCountedForExpense(cost) &&
+      isDateRangeOverlapping(cost.period_start, cost.period_end, monthStart, monthEnd),
+  );
+}
+
+export function calculateFinancialTotals(
+  subscriptions: Pick<Subscription, "price_snapshot" | "start_date" | "end_date" | "status">[],
+  costs: Pick<ServiceAccountCost, "amount" | "period_start" | "period_end" | "status">[],
+  selectedMonth?: string,
+) {
+  const filteredSubscriptions = selectedMonth
+    ? filterSubscriptionsForMonth(subscriptions, selectedMonth)
+    : subscriptions.filter(isSubscriptionCountedForRevenue);
+  const filteredCosts = selectedMonth
+    ? filterCostsForMonth(costs, selectedMonth)
+    : costs.filter(isCostCountedForExpense);
+  const totalRevenue = filteredSubscriptions.reduce((sum, item) => sum + (item.price_snapshot || 0), 0);
+  const totalExpense = filteredCosts.reduce((sum, item) => sum + (item.amount || 0), 0);
+
+  return {
+    totalRevenue,
+    totalExpense,
+    netProfit: totalRevenue - totalExpense,
+  };
+}
+
 export async function getFinancialOverview(selectedMonth?: string): Promise<FinancialOverviewResult> {
   const [incomesResult, expensesResult] = await Promise.all([
     supabase
       .from("subscriptions")
-      .select("price_snapshot,start_date")
+      .select("price_snapshot,start_date,end_date,status")
       .in("status", ["booked", "completed"]),
     supabase
       .from("service_account_costs")
-      .select("amount,cost_date")
+      .select("amount,period_start,period_end,status")
       .neq("status", "cancelled"),
   ]);
 
-  let incomes = incomesResult.data ?? [];
-  let expenses = expensesResult.data ?? [];
-
-  if (selectedMonth) {
-    incomes = incomes.filter((inc) => inc.start_date.startsWith(selectedMonth));
-    expenses = expenses.filter((exp) => exp.cost_date.startsWith(selectedMonth));
-  }
-
-  const totalRevenue = incomes.reduce((sum, item) => sum + (item.price_snapshot || 0), 0);
-  const totalExpense = expenses.reduce((sum, item) => sum + (item.amount || 0), 0);
-  const netProfit = totalRevenue - totalExpense;
+  const { totalRevenue, totalExpense, netProfit } = calculateFinancialTotals(
+    incomesResult.data ?? [],
+    expensesResult.data ?? [],
+    selectedMonth || undefined,
+  );
   const profitMargin = totalRevenue > 0 ? Math.round((netProfit / totalRevenue) * 100) : 0;
 
   let selectedMonthLabel: string | undefined;
@@ -87,32 +141,33 @@ export async function getFinancialTrends(): Promise<MonthlyTrendItem[]> {
   const [incomesResult, expensesResult] = await Promise.all([
     supabase
       .from("subscriptions")
-      .select("price_snapshot,start_date")
+      .select("price_snapshot,start_date,end_date,status")
       .in("status", ["booked", "completed"]),
     supabase
       .from("service_account_costs")
-      .select("amount,cost_date")
+      .select("amount,period_start,period_end,status")
       .neq("status", "cancelled"),
   ]);
 
   const monthlyData: Record<string, { revenue: number; expense: number }> = {};
-
-  // Group incomes
-  (incomesResult.data ?? []).forEach((item) => {
-    const monthKey = item.start_date.slice(0, 7); // YYYY-MM
+  const ensureMonth = (monthKey: string) => {
     if (!monthlyData[monthKey]) {
       monthlyData[monthKey] = { revenue: 0, expense: 0 };
     }
-    monthlyData[monthKey].revenue += item.price_snapshot || 0;
+  };
+
+  (incomesResult.data ?? []).filter(isSubscriptionCountedForRevenue).forEach((item) => {
+    getMonthKeysTouchedByDateRange(item.start_date, item.end_date).forEach((monthKey) => {
+      ensureMonth(monthKey);
+      monthlyData[monthKey].revenue += item.price_snapshot || 0;
+    });
   });
 
-  // Group expenses
-  (expensesResult.data ?? []).forEach((item) => {
-    const monthKey = item.cost_date.slice(0, 7); // YYYY-MM
-    if (!monthlyData[monthKey]) {
-      monthlyData[monthKey] = { revenue: 0, expense: 0 };
-    }
-    monthlyData[monthKey].expense += item.amount || 0;
+  (expensesResult.data ?? []).filter(isCostCountedForExpense).forEach((item) => {
+    getMonthKeysTouchedByDateRange(item.period_start, item.period_end).forEach((monthKey) => {
+      ensureMonth(monthKey);
+      monthlyData[monthKey].expense += item.amount || 0;
+    });
   });
 
   // Convert to sorted list and limit to last 6 months
@@ -230,18 +285,18 @@ export async function getCombinedLedger(): Promise<LedgerTransaction[]> {
 
 export async function getAvailableMonths(): Promise<{ value: string; label: string }[]> {
   const [incomesResult, expensesResult] = await Promise.all([
-    supabase.from("subscriptions").select("start_date").neq("status", "archived"),
-    supabase.from("service_account_costs").select("cost_date").neq("status", "cancelled"),
+    supabase.from("subscriptions").select("start_date,end_date,status").in("status", ["booked", "completed"]),
+    supabase.from("service_account_costs").select("period_start,period_end,status").neq("status", "cancelled"),
   ]);
 
   const months = new Set<string>();
 
-  (incomesResult.data ?? []).forEach((item) => {
-    if (item.start_date) months.add(item.start_date.slice(0, 7));
+  (incomesResult.data ?? []).filter(isSubscriptionCountedForRevenue).forEach((item) => {
+    getMonthKeysTouchedByDateRange(item.start_date, item.end_date).forEach((monthKey) => months.add(monthKey));
   });
 
-  (expensesResult.data ?? []).forEach((item) => {
-    if (item.cost_date) months.add(item.cost_date.slice(0, 7));
+  (expensesResult.data ?? []).filter(isCostCountedForExpense).forEach((item) => {
+    getMonthKeysTouchedByDateRange(item.period_start, item.period_end).forEach((monthKey) => months.add(monthKey));
   });
 
   return Array.from(months)

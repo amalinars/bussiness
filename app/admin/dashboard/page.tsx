@@ -61,18 +61,18 @@ export default async function DashboardPage() {
       tone: "pink" as const,
     },
     {
-      title: "Monthly Spent",
-      value: `Rp ${data.monthlySpent.toLocaleString("id-ID")}`,
-      helper: "Cost recorded for this current month",
+      title: "Total Spent",
+      value: `Rp ${data.totalSpent.toLocaleString("id-ID")}`,
+      helper: "All-time supplier costs",
       icon: WalletCards,
       tone: "yellow" as const,
     },
     {
-      title: "Monthly Gross Profit",
-      value: `Rp ${data.monthlyGrossProfit.toLocaleString("id-ID")}`,
-      helper: "Monthly booking value - monthly spent",
+      title: "Gross Profit",
+      value: `Rp ${data.grossProfit.toLocaleString("id-ID")}`,
+      helper: "All-time booking value - all-time spent",
       icon: CheckCircle2,
-      tone: "green" as const,
+      tone: data.grossProfit >= 0 ? ("green" as const) : ("pink" as const),
     },
   ];
 

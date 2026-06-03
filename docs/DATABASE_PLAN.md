@@ -200,6 +200,53 @@ Not included yet:
 Implementation status:
 Migration SQL exists.
 
+### service_account_costs
+
+Purpose:
+Store supplier or platform expenses for internal service accounts.
+
+Database object:
+`riztama_business.service_account_costs`
+
+Planned fields:
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` | Primary key. |
+| `service_account_id` | `uuid` | Required FK to `service_accounts.id`. |
+| `cost_date` | `date` | Required payment or recording date. |
+| `period_start` | `date` | Required start date for the covered account period. |
+| `period_end` | `date` | Required end date for the covered account period. |
+| `amount` | `integer` | Required non-negative cost amount in rupiah. |
+| `status` | `text` | Uses service account cost status constants. |
+| `notes` | `text` | Optional internal notes. |
+| `created_at` | `timestamptz` | Created timestamp. |
+| `updated_at` | `timestamptz` | Updated timestamp. |
+
+Planned service account cost statuses:
+
+- `paid`
+- `planned`
+- `cancelled`
+
+Initial UI usage:
+
+- Service account detail cost history
+- Financials expense entry and cancellation
+- Dashboard monthly spent and gross profit
+
+Dashboard and finance spent rules:
+
+- All-time spent uses the full `amount` from every non-cancelled cost row.
+- Selected-period spent uses the full `amount` when `period_start` through `period_end` overlaps the selected period.
+- Monthly spent uses the same overlap rule, so costs paid near the end of the previous month still count when their covered account period is active this month.
+- Do not prorate by day.
+- Do not use `cost_date` for period spent summaries; `cost_date` remains the payment/ledger date.
+- Exclude rows with `status = 'cancelled'`.
+
+Implementation status:
+Migration SQL exists.
+
 ### subscriptions
 
 Purpose:
@@ -241,6 +288,13 @@ Initial UI usage:
 - Inline new-customer creation during booking
 - Package-driven price and end date defaults
 - Soft archive through `status = 'archived'`
+
+Dashboard and finance revenue rules:
+
+- All-time booking value uses `price_snapshot` from every `booked` or `completed` row.
+- Selected-period revenue uses the full `price_snapshot` when `start_date` through `end_date` overlaps the selected period.
+- Do not prorate by day.
+- Exclude `cancelled` and `archived` rows from booking revenue.
 
 Implementation status:
 Migration SQL exists.
@@ -352,6 +406,8 @@ Not created:
 - 2026-05-31: Rental packages and subscriptions/bookings were added as the first transaction flow. Bookings use package snapshots and support inline customer creation. See `docs/development-log/2026-05-31-bookings-rental-packages.md`.
 - 2026-05-31: Service account cost history table and monthly spent financial aggregation on the dashboard were introduced using `riztama_business.service_account_costs`. See `docs/development-log/2026-05-31-service-account-costs.md`.
 - 2026-05-31: Automatic sync of booking/subscription status changes to service account profile statuses (occupied/available) and service account used slots via PostgreSQL database triggers. See `docs/development-log/2026-05-31-sync-booking-profile-status.md`.
+- 2026-06-03: Dashboard monthly spent now uses `service_account_costs.period_start` and `period_end` overlap with the current month, not only `cost_date`, so active cost coverage remains visible after a calendar month changes. See `docs/development-log/2026-06-03-dashboard-monthly-spent-period-overlap.md`.
+- 2026-06-03: Dashboard and Financials period totals now separate all-time money in/out from selected-period overlap summaries. See `docs/development-log/2026-06-03-dashboard-finance-period-totals.md`.
 
 ## Open Questions
 
