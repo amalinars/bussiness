@@ -21,7 +21,7 @@ Planned features:
 - Quick links to major modules
 
 Current status:
-Active MVP module. Fully database-backed. Renders real-time aggregate statistics for active customer count, total active service accounts, free slot counts, and service accounts requiring attention. Also shows booking metrics from `riztama_business.subscriptions`, including active bookings, completed bookings, booking value from `price_snapshot`, rows ending soon, and per-service-account booking summaries. Includes monthly spent and monthly gross profit indicators using `riztama_business.service_account_costs` to track service account operational expenses. Includes a unified recent activity feed for newly added customers and accounts.
+Active MVP module. Fully database-backed. Renders real-time aggregate statistics for active customer count, total active service accounts, free slot counts, and service accounts requiring attention. Also shows booking metrics from `riztama_business.subscriptions`, including active bookings, completed bookings, all-time booking value from `price_snapshot`, rows ending soon, and per-service-account booking summaries. Dashboard top-level spent and gross profit use all-time non-cancelled supplier costs from `riztama_business.service_account_costs`, so gross profit represents total booking value minus total supplier costs. Per-service-account monthly summaries still use overlap-based month logic: booking and cost periods count when their active date range overlaps the current month, even when payment `cost_date` or booking `start_date` was in a previous month. Includes a unified recent activity feed for newly added customers and accounts.
 
 Future improvements:
 Analytics, date filters, trends, revenue summaries, and alert prioritization.
@@ -122,7 +122,7 @@ Main data handled:
 Subscription price snapshots from `riztama_business.subscriptions`, service account expense records from `riztama_business.service_account_costs`, month filters, trend summaries, and combined ledger rows.
 
 Current status:
-Active MVP module exposed as the Financials sidebar page. The page reads finance aggregates through `lib/finance.ts`, records supplier expenses through `lib/service-account-costs.ts`, supports URL-backed month filtering with a small client filter component, renders cash-flow metrics, a Recharts-powered neobrutalist trend chart, a combined income/expense ledger, and per-service-account unit economics. Expense cancellation marks rows `cancelled` instead of deleting them.
+Active MVP module exposed as the Financials sidebar page. The page reads finance aggregates through `lib/finance.ts`, records supplier expenses through `lib/service-account-costs.ts`, supports URL-backed month filtering with a small client filter component, renders cash-flow metrics, a Recharts-powered neobrutalist trend chart, a combined income/expense ledger, and per-service-account unit economics. Selected-month finance summaries use active period overlap: booking revenue uses `subscriptions.start_date` through `end_date`, while supplier expense uses `service_account_costs.period_start` through `period_end`. The ledger still lists rows by transaction/payment date for auditability. Expense cancellation marks rows `cancelled` instead of deleting them.
 
 Future improvements:
 Payment reconciliation, exports, custom date ranges, receivables/payables separation, and richer profit analytics.

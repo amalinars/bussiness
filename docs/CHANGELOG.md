@@ -4,6 +4,7 @@
 
 ### Added
 
+* Shared dashboard date-range regression test for monthly service account cost overlap behavior.
 * Initial project documentation.
 * Initial project context.
 * Initial development rules.
@@ -47,6 +48,9 @@
 
 ### Changed
 
+* Dashboard gross profit now uses all-time booking value minus all-time supplier costs, so the top-level business result matches total money in/out.
+* Financials selected-month summaries now use active period overlap for booking revenue and supplier expenses instead of relying only on booking start dates or expense payment dates.
+* Dashboard monthly spent now counts service account cost periods that overlap the current month instead of relying only on payment `cost_date`.
 * Documented that the initial database foundation intentionally uses only the `riztama_business.customers` and `riztama_business.service_accounts` tables.
 * Clarified that future module tables such as platforms, subscriptions, payments, reminders, settings, and slot assignment are not part of the initial migration scope.
 * Clarified that the dedicated database schema remains `riztama_business`, not the default public schema.

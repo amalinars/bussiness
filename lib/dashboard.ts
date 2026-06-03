@@ -1,4 +1,11 @@
 import { supabase } from "@/lib/supabase";
+import {
+  addDaysToDateOnly,
+  getMonthRangeForDateInTimeZone,
+  isDateInRange,
+  isDateRangeOverlapping,
+  toDateOnlyInTimeZone,
+} from "@/lib/date-ranges";
 import type { ServiceAccount, ServiceAccountCost, Subscription } from "@/types/database";
 
 type DashboardSubscriptionRow = Pick<
@@ -24,10 +31,6 @@ type DashboardServiceAccountCostRow = Pick<
   "id" | "service_account_id" | "cost_date" | "period_start" | "period_end" | "amount" | "status"
 >;
 
-function toDateOnly(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
-
 function formatDateOnly(dateValue: string) {
   return new Date(`${dateValue}T00:00:00.000Z`).toLocaleDateString("id-ID", {
     day: "numeric",
@@ -35,23 +38,11 @@ function formatDateOnly(dateValue: string) {
   });
 }
 
-function isInDateRange(dateValue: string, startDate: string, endDate: string) {
-  return dateValue >= startDate && dateValue <= endDate;
-}
-
-function overlapsDateRange(startA: string, endA: string, startB: string, endB: string) {
-  return startA <= endB && endA >= startB;
-}
-
 export async function getDashboardData() {
   const today = new Date();
-  const todayDate = toDateOnly(today);
-  const currentMonthStart = `${todayDate.slice(0, 7)}-01`;
-  const currentMonthEndDate = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 0));
-  const currentMonthEnd = toDateOnly(currentMonthEndDate);
-  const endingSoonLimit = new Date(today);
-  endingSoonLimit.setDate(today.getDate() + 3);
-  const endingSoonDate = toDateOnly(endingSoonLimit);
+  const todayDate = toDateOnlyInTimeZone(today);
+  const { monthStart: currentMonthStart, monthEnd: currentMonthEnd } = getMonthRangeForDateInTimeZone(today);
+  const endingSoonDate = addDaysToDateOnly(todayDate, 3);
 
   const [
     { count: customerCount },
@@ -111,12 +102,18 @@ export async function getDashboardData() {
   const costs = (costsData ?? []) as unknown as DashboardServiceAccountCostRow[];
   const countedSubscriptions = subscriptions.filter((subscription) => subscription.status === "booked" || subscription.status === "completed");
   const currentMonthSubscriptions = countedSubscriptions.filter((subscription) =>
-    overlapsDateRange(subscription.start_date, subscription.end_date, currentMonthStart, currentMonthEnd),
+    isDateRangeOverlapping(subscription.start_date, subscription.end_date, currentMonthStart, currentMonthEnd),
   );
-  const currentMonthCosts = costs.filter((cost) => cost.status !== "cancelled" && isInDateRange(cost.cost_date, currentMonthStart, currentMonthEnd));
+  const currentMonthCosts = costs.filter(
+    (cost) =>
+      cost.status !== "cancelled" &&
+      isDateRangeOverlapping(cost.period_start, cost.period_end, currentMonthStart, currentMonthEnd),
+  );
   const activeBookingsCount = subscriptions.filter((subscription) => subscription.status === "booked").length;
   const completedBookingsCount = subscriptions.filter((subscription) => subscription.status === "completed").length;
   const bookingValue = countedSubscriptions.reduce((acc, subscription) => acc + subscription.price_snapshot, 0);
+  const totalSpent = costs.reduce((acc, cost) => acc + cost.amount, 0);
+  const grossProfit = bookingValue - totalSpent;
   const monthlyBookingValue = currentMonthSubscriptions.reduce((acc, subscription) => acc + subscription.price_snapshot, 0);
   const monthlySpent = currentMonthCosts.reduce((acc, cost) => acc + cost.amount, 0);
   const monthlyGrossProfit = monthlyBookingValue - monthlySpent;
@@ -124,8 +121,7 @@ export async function getDashboardData() {
     .filter(
       (subscription) =>
         subscription.status === "booked" &&
-        subscription.end_date >= todayDate &&
-        subscription.end_date <= endingSoonDate,
+        isDateInRange(subscription.end_date, todayDate, endingSoonDate),
     )
     .sort((a, b) => a.end_date.localeCompare(b.end_date))
     .slice(0, 5)
@@ -162,7 +158,7 @@ export async function getDashboardData() {
         existing.totalBookings += 1;
         existing.bookingValue += subscription.price_snapshot;
 
-        if (overlapsDateRange(subscription.start_date, subscription.end_date, currentMonthStart, currentMonthEnd)) {
+        if (isDateRangeOverlapping(subscription.start_date, subscription.end_date, currentMonthStart, currentMonthEnd)) {
           existing.monthlyBookingValue += subscription.price_snapshot;
         }
 
@@ -229,6 +225,8 @@ export async function getDashboardData() {
     activeBookingsCount,
     completedBookingsCount,
     bookingValue,
+    totalSpent,
+    grossProfit,
     monthlyBookingValue,
     monthlySpent,
     monthlyGrossProfit,
